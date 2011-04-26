@@ -1,8 +1,8 @@
 $ProfileDir = (split-path $MyInvocation.MyCommand.Path -Parent)
 
 Push-Location $ProfileDir
-	. ./PowerShell.ps1
-	. ./Themes/blackboard.ps1
+    . ./PowerShell.ps1
+    . ./Themes/blackboard.ps1
 Pop-Location
 
 function ISE-CommentSelectedText {
@@ -28,7 +28,7 @@ function ISE-UncommentSelectedText {
 
 function ISE-ToggleCommenting {
     if ($psISE.CurrentFile.Editor.SelectedText.StartsWith('#')) {
-        ISE-UncommentSelectedText       
+        ISE-UncommentSelectedText
     }
     else {
         ISE-CommentSelectedText
@@ -53,7 +53,7 @@ function Insert-Text{
         [string]
         $text
     )
-    
+
     $currentFilePath = $psise.CurrentOpenedFile.FullPath
     $currentFile = $psIse.CurrentOpenedRunspace.OpenedFiles | where {$_.FullPath -eq $currentFilePath}
     $currentFile.Editor.InsertText($text)
