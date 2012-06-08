@@ -1,4 +1,4 @@
-$ProfileDir = (split-path $MyInvocation.MyCommand.Path -Parent)
+$ProfileDir = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 
 Push-Location $ProfileDir
     . ./PowerShell.ps1

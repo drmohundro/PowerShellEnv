@@ -8,4 +8,4 @@ The powershell files can be dropped under `c:\users\USERID\Documents\WindowsPowe
 
 ## Need help?
 
-Visit my [website](http://www.mohundro.com/blog) and shoot me a line.
+Visit my [website](http://mohundro.com/blog) and shoot me a line.

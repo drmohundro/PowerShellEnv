@@ -9,4 +9,4 @@ Set-Alias sudo Elevate-Process
 Set-Alias color Out-ColorMatchInfo
 Set-Alias hg hg-wrapper
 Set-Alias tgit tgit-wrapper
-Set-Alias npp "C:\Program Files (x86)\Notepad++\notepad++.exe"
+Set-Alias e "gvim.exe"

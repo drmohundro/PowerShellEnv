@@ -15,14 +15,14 @@ function prompt {
 
     write-host ' '
 
-    write-host ([Environment]::MachineName) -n -f $chost
-    write-host ' {' -n -f $cdelim
-    write-host (shorten-path (pwd).Path) -n -f $cloc
-    write-host '} ' -n -f $cdelim
+    write-host ([Environment]::MachineName) -nonewline -foregroundcolor $chost
+    write-host ' {' -nonewline -foregroundcolor $cdelim
+    write-host (shorten-path (pwd).Path) -nonewline -foregroundcolor $cloc
+    write-host '} ' -nonewline -foregroundcolor $cdelim
 
     $promptCalls | foreach { $_.Invoke() }
 
-    write-host "»" -n -f $cloc
+    write-host "»" -nonewline -foregroundcolor $cloc
     ' '
 
     $host.UI.RawUI.ForegroundColor = [ConsoleColor]::White
@@ -48,22 +48,16 @@ function Add-ToPath {
     }
 }
 
-Import-Module Pscx -DisableNameChecking
-$Pscx:Preferences['TextEditor'] = "gvim.exe"
-$Pscx:Preferences['FileSizeInUnits'] = $true
-
-$vcargs = ?: {$Pscx:Is64BitProcess} {'amd64'} {''}
-$VS100VCVarsBatchFile = "${env:VS100COMNTOOLS}..\..\VC\vcvarsall.bat"
-Invoke-BatchFile $VS100VCVarsBatchFile $vcargs
+Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 
 # override the PSCX cmdlets with the default cmdlet
 Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml
 
 Push-Location $ProfileDir
-# Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
+    # Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
     If (Test-Path ./EnvSpecificProfile.ps1) { . ./EnvSpecificProfile.ps1 }
 
-# Bring in prompt and other UI niceties
+    # Bring in prompt and other UI niceties
     . ./EyeCandy.ps1
 
     Update-TypeData ./TypeData/System.Type.ps1xml
@@ -72,3 +66,5 @@ Push-Location $ProfileDir
     . ./lib/aliases.ps1
     . ./lib/utils.ps1
 Pop-Location
+
+Load-VcVars

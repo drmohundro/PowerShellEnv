@@ -2,8 +2,8 @@
 # http://www.vim.org/scripts/script.php?script_id=2280
 
 # fonts
-$psISE.Options.FontName = 'Consolas'
-$psISE.Options.FontSize = 16
+$psISE.Options.FontName = 'Envy Code R'
+$psISE.Options.FontSize = 11
 
 # output pane
 $psISE.Options.OutputPaneBackgroundColor = '#FF2E3436'
