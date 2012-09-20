@@ -5,15 +5,8 @@
 $psISE.Options.FontName = 'Envy Code R'
 $psISE.Options.FontSize = 11
 
-# output pane
-$psISE.Options.OutputPaneBackgroundColor = '#FF2E3436'
-$psISE.Options.OutputPaneTextBackgroundColor = '#FF2E3436'
-$psISE.Options.OutputPaneForegroundColor = '#FFFFFFFF'
-
-# command pane
-$psISE.Options.CommandPaneBackgroundColor = '#FF2E3436'
-
-# script pane
+$psISE.Options.ConsolePaneBackgroundColor = '#FF2E3436'
+$psISE.Options.ConsolePaneTextBackgroundColor = '#FF2E3436'
 $psISE.Options.ScriptPaneBackgroundColor = '#FF2E3436'
 
 # tokens

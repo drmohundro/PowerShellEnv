@@ -16,16 +16,12 @@
 		CD                = $false
 		DirectoryServices = $true
 		FileSystem        = $true
-		GetChildItem      = $false
 		GetHelp           = $true
 		Net               = $true
 		Prompt            = $false
-		TabExpansion      = $false
 		TranscribeSession = $false
 		Utility           = $true
 		Vhd               = $true
-
-        # disabled because of issues with PowerShell v3
-		Wmi               = $false
+		Wmi               = $true
 	}    
 }

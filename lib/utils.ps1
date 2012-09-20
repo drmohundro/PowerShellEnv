@@ -1,18 +1,13 @@
 function Write-ScmStatus {
     if ((Get-Location | Select -expand Provider | Select -expand Name) -eq 'FileSystem') {
-        if (has-anyofparentpath @('.svn', '.git')) {
+        if (has-anyofparentpath @('.svn', '.git', '.hg')) {
             if ((Get-Command vcprompt.bat) -ne $null) {
-                $vc = vcprompt.bat
+                $vc = vcprompt.bat --format-hg '[%s:%b (%r:%h)]'  --format-git '[%s:%b (%r)]'
                 write-host $vc -f Gray
             }
             else {
                 write-host ''
             }
-        }
-        elseif (has-parentpath '.hg') {
-            $branchName = cat $(join-path (get-parentpath '.hg') 'branch')
-            $revision = hg id -n -r .
-            write-host "[hg:$branchName (r:$revision)]" -f 'Gray'
         }
         else {
             write-host ' '

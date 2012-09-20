@@ -13,22 +13,22 @@ function prompt {
     $cdelim = [ConsoleColor]::DarkCyan
     $cloc = [ConsoleColor]::Cyan
 
-    write-host ' '
+    Write-Host ' '
 
-    write-host ([Environment]::MachineName) -nonewline -foregroundcolor $chost
-    write-host ' {' -nonewline -foregroundcolor $cdelim
-    write-host (shorten-path (pwd).Path) -nonewline -foregroundcolor $cloc
-    write-host '} ' -nonewline -foregroundcolor $cdelim
+    Write-Host ([Environment]::MachineName) -nonewline -foregroundcolor $chost
+    Write-Host ' {' -nonewline -foregroundcolor $cdelim
+    Write-Host (Shorten-Path (pwd).Path) -nonewline -foregroundcolor $cloc
+    Write-Host '} ' -nonewline -foregroundcolor $cdelim
 
     $promptCalls | foreach { $_.Invoke() }
 
-    write-host "»" -nonewline -foregroundcolor $cloc
+    Write-Host "»" -nonewline -foregroundcolor $cloc
     ' '
 
     $host.UI.RawUI.ForegroundColor = [ConsoleColor]::White
 } 
 
-function shorten-path([string] $path = $pwd) {
+function Shorten-Path([string] $path = $pwd) {
    $loc = $path.Replace($HOME, '~')
    # remove prefix for UNC paths
    $loc = $loc -replace '^[^:]+::', ''
