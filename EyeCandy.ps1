@@ -1,11 +1,5 @@
-if ($IsAdmin -and ([System.Environment]::OSVersion.Version.Major -gt 5)) {
-    $foreColor = 'White'
-    $backColor = 'DarkRed'
-}
-else {
-    $foreColor = 'White'
-    $backColor = 'Black'
-}
+$foreColor = 'White'
+$backColor = 'Black'
 
 $hostTitle = {
     if ($IsAdmin) { '(Admin)' }

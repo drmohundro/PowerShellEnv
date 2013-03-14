@@ -6,7 +6,7 @@ function Write-ScmStatus {
                 write-host $vc -f Gray
             }
             else {
-                write-host ''
+                write-host ' '
             }
         }
         else {
@@ -22,17 +22,6 @@ Add-CallToPrompt { Write-ScmStatus }
 
 function Get-AliasShortcut([string]$commandName) {
     ls Alias: | ?{ $_.Definition -match $commandName }
-}
-
-function git {
-    # msysgit options - see http://code.google.com/p/msysgit/issues/detail?id=326&q=color&colspec=ID%20Type%20Status%20Priority%20Component%20Owner%20Summary#c5
-    $env:LESS = 'FRSX'
-    $env:TERM = 'cygwin'
-
-    & git.cmd $args
-
-    $env:LESS = $null
-    $env:TERM = $null
 }
 
 function Start-VisualStudio([string]$path) {
@@ -215,8 +204,8 @@ function Load-VcVars {
     if (Is64Bit) {
         $vcargs = 'amd64'
     }
-    $VS100VCVarsBatchFile = "${env:VS100COMNTOOLS}..\..\VC\vcvarsall.bat"
-    Invoke-BatchFile $VS100VCVarsBatchFile $vcargs
+    $VS110VCVarsBatchFile = "${env:VS110COMNTOOLS}..\..\VC\vcvarsall.bat"
+    Invoke-BatchFile $VS110VCVarsBatchFile $vcargs
 }
 
 function Format-Byte {
