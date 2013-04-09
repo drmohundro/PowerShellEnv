@@ -48,6 +48,8 @@ function Add-ToPath {
     }
 }
 
+Add-ToPath "c:\Python27"
+
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 
 # override the PSCX cmdlets with the default cmdlet

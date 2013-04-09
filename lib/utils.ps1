@@ -1,13 +1,8 @@
 function Write-ScmStatus {
     if ((Get-Location | Select -expand Provider | Select -expand Name) -eq 'FileSystem') {
-        if (has-anyofparentpath @('.svn', '.git', '.hg')) {
-            if ((Get-Command vcprompt.bat) -ne $null) {
-                $vc = vcprompt.bat --format-hg '[%s:%b (%r:%h)]'  --format-git '[%s:%b (%r)]'
-                write-host $vc -f Gray
-            }
-            else {
-                write-host ' '
-            }
+        if (Has-AnyOfParentPath @('.svn', '.git', '.hg')) {
+            $vc = & "$profileDir/scripts/vcprompt.bat" --format-hg '[%s:%b (%r:%h)]'  --format-git '[%s:%b (%r)]'
+            write-host $vc -f Gray
         }
         else {
             write-host ' '
@@ -41,7 +36,7 @@ function Get-LatestErrors([int] $newest = 5) {
     Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
 }
 
-function has-anyofparentpath([string[]]$paths) {
+function Has-AnyOfParentPath([string[]]$paths) {
     $hasPath = $false
     foreach ($path in $paths) {
         $hasPath = has-parentpath $path
