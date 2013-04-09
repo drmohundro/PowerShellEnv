@@ -548,7 +548,12 @@ def hg(options):
     # changeset ID or global sha
     if re.search('%(r|h)', options.format):
         try:
-            fh = open(os.path.join(options.file, 'cache/branchheads'), 'r')
+            if os.path.isfile(os.path.join(options.file, 'cache/branchheads')):
+                branchheads_file = os.path.join(options.file, 'cache/branchheads')
+            else:
+                branchheads_file = os.path.join(options.file, 'cache/branchheads-served')
+
+            fh = open(branchheads_file, 'r')
             line = fh.readline()
             sha, revision = line.strip().split()
             sha = sha[:7]
