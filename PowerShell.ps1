@@ -65,8 +65,8 @@ Push-Location $ProfileDir
     Update-TypeData ./TypeData/System.Type.ps1xml
     Update-TypeData ./TypeData/System.Diagnostics.Process.ps1xml
 
-    . ./lib/aliases.ps1
     . ./lib/utils.ps1
+    . ./lib/aliases.ps1
 Pop-Location
 
 Load-VcVars
