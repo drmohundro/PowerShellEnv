@@ -69,4 +69,18 @@ Push-Location $ProfileDir
     . ./lib/aliases.ps1
 Pop-Location
 
+if ((Get-Module PSReadLine -ListAvailable) -ne $null) {
+    Import-Module PSReadLine
+
+    Set-PSReadlineOption -EditMode Emacs
+    Set-PSReadlineOption -BellStyle None
+
+    Set-PSReadlineKeyHandler -Key UpArrow -BriefDescription HistorySearchBackward -Handler {
+        [PSConsoleUtilities.PSConsoleReadLine]::HistorySearchBackward()
+    }
+    Set-PSReadlineKeyHandler -Key DownArrow -BriefDescription HistorySearchForward -Handler {
+        [PSConsoleUtilities.PSConsoleReadLine]::HistorySearchForward()
+    }
+}
+
 Load-VcVars

@@ -17,4 +17,10 @@ Set-Alias color Out-ColorMatchInfo
 Set-Alias hg hg-wrapper
 Set-Alias tgit tgit-wrapper
 Set-Alias e "gvim.exe"
-Set-Alias subl "C:\Program Files\Sublime Text 2\sublime_text.exe"
+Set-Alias subl "C:\Program Files\Sublime Text 3\sublime_text.exe"
+
+function MarkdownPad($path) {
+    $path = Resolve-Path $Path
+    & "C:\Program Files (x86)\MarkdownPad 2\MarkdownPad2.exe" $path
+}
+Set-Alias mpad MarkdownPad
