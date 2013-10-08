@@ -48,7 +48,9 @@ function Add-ToPath {
     }
 }
 
-Add-ToPath "c:\Python27"
+if (Test-Path c:\Python27) {
+    Add-ToPath "c:\Python27"
+}
 
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 
@@ -75,12 +77,8 @@ if ((Get-Module PSReadLine -ListAvailable) -ne $null) {
     Set-PSReadlineOption -EditMode Emacs
     Set-PSReadlineOption -BellStyle None
 
-    Set-PSReadlineKeyHandler -Key UpArrow -BriefDescription HistorySearchBackward -Handler {
-        [PSConsoleUtilities.PSConsoleReadLine]::HistorySearchBackward()
-    }
-    Set-PSReadlineKeyHandler -Key DownArrow -BriefDescription HistorySearchForward -Handler {
-        [PSConsoleUtilities.PSConsoleReadLine]::HistorySearchForward()
-    }
+    Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
+    Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
 
 Load-VcVars

@@ -22,6 +22,6 @@
 		TranscribeSession = $false
 		Utility           = $true
 		Vhd               = $true
-		Wmi               = $true
+		Wmi               = $false
 	}    
 }
