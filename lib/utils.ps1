@@ -199,8 +199,8 @@ function Load-VcVars {
     if (Is64Bit) {
         $vcargs = 'amd64'
     }
-    $VS110VCVarsBatchFile = "${env:VS110COMNTOOLS}..\..\VC\vcvarsall.bat"
-    Invoke-BatchFile $VS110VCVarsBatchFile $vcargs
+    $vcVarsBatchFile = "${env:VS120COMNTOOLS}..\..\VC\vcvarsall.bat"
+    Invoke-BatchFile $vcVarsBatchFile $vcargs
 }
 
 function Format-Byte {
