@@ -24,3 +24,9 @@ function MarkdownPad($path) {
     & "C:\Program Files (x86)\MarkdownPad 2\MarkdownPad2.exe" $path
 }
 Set-Alias mpad MarkdownPad
+
+function Run-PlatinumSearcher {
+    # default to 'smart-case' searches with '-S'
+    pt.exe -S @args
+}
+Set-Alias pt Run-PlatinumSearcher
