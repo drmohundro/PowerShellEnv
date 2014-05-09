@@ -25,8 +25,9 @@ function MarkdownPad($path) {
 }
 Set-Alias mpad MarkdownPad
 
+# see https://github.com/monochromegane/the_platinum_searcher
 function Run-PlatinumSearcher {
     # default to 'smart-case' searches with '-S'
-    pt.exe -S @args
+    pt.exe -S --color @args
 }
 Set-Alias pt Run-PlatinumSearcher

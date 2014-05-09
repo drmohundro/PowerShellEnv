@@ -20,9 +20,9 @@ Return
 Return
 
 
-; Replace WinR to point to SlickRun (alt+q) (required in Windows 8 as far as I can tell)
+; Replace WinR to point to Executor (win+a) (required in Windows 8 as far as I can tell)
 $#r::
-  Send, !q
+  Send, #a
 return
 
 

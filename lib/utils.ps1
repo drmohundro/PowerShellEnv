@@ -23,6 +23,12 @@ function Start-VisualStudio([string]$path) {
     & devenv /edit $path
 }
 
+function bcomp($left, $right) {
+    $left = Resolve-Path $left
+    $right = Resolve-Path $right
+    & 'C:/Program Files (x86)/Beyond Compare 4/BComp.exe' $left, $right
+}
+
 function Elevate-Process {
     $file, [string]$arguments = $args
     $psi = new-object System.Diagnostics.ProcessStartInfo $file
