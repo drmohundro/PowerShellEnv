@@ -8,26 +8,30 @@
 
 ; Map Caps Lock to Control if pressed with another key; else map to Escape
 *CapsLock::
-    Send {Blind}{Ctrl Down}
-    cDown := A_TickCount
+  Send {Blind}{Ctrl Down}
+  cDown := A_TickCount
 Return
 
 *CapsLock up::
-    If ((A_TickCount-cDown) < 250)  ; Modify press time as needed (milliseconds)
-        Send {Blind}{Ctrl Up}{Esc}
-    Else
-        Send {Blind}{Ctrl Up}
+  If ((A_TickCount-cDown) < 250)  ; Modify press time as needed (milliseconds)
+    Send {Blind}{Ctrl Up}{Esc}
+  Else
+    Send {Blind}{Ctrl Up}
 Return
 
+; Via http://www.howtogeek.com/howto/25590/how-to-enable-ctrlv-for-pasting-in-the-windows-command-prompt/
+if WinActive("ahk_class ConsoleWindowClass") {
+  ^V::
+    SendInput {Raw}%clipboard%
+  return
+}
 
 ; Replace WinR to point to Executor (win+a) (required in Windows 8 as far as I can tell)
 $#r::
   Send, #a
 return
 
-
-if WinActive("ahk_class wndclass_desked_gsk")
-{
+if WinActive("ahk_class wndclass_desked_gsk") {
   ; Process Go to next member/tag
   $!J::
     Send, !{Down}
