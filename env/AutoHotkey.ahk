@@ -26,11 +26,6 @@ if WinActive("ahk_class ConsoleWindowClass") {
   return
 }
 
-; Replace WinR to point to Executor (win+a) (required in Windows 8 as far as I can tell)
-$#r::
-  Send, #a
-return
-
 if WinActive("ahk_class wndclass_desked_gsk") {
   ; Process Go to next member/tag
   $!J::
