@@ -54,6 +54,7 @@ if (Test-Path c:\Python27) {
 
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 Import-Module posh-git
+Import-Module ./Modules/Jump-Location/Jump.Location.psd1
 
 # override the PSCX cmdlets with the default cmdlet
 Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml

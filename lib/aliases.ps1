@@ -18,6 +18,7 @@ Set-Alias hg hg-wrapper
 Set-Alias tgit tgit-wrapper
 Set-Alias e "gvim.exe"
 Set-Alias subl "C:\Program Files\Sublime Text 3\sublime_text.exe"
+Set-Alias open Start-Process
 
 function MarkdownPad($path) {
     $path = Resolve-Path $Path
