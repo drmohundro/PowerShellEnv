@@ -6,25 +6,18 @@
 ;   + - Shift
 ;-------------------------------
 
-; Map Caps Lock to Control if pressed with another key; else map to Escape
-*CapsLock::
-  Send {Blind}{Ctrl Down}
-  cDown := A_TickCount
-Return
+;Author: Autohotkey forum user RHCP
+;http://www.autohotkey.com/board/topic/103174-dual-function-control-key/
+if !state
+  state := (GetKeyState("Shift", "P") ||  GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
+return
 
-*CapsLock up::
-  If ((A_TickCount-cDown) < 250)  ; Modify press time as needed (milliseconds)
-    Send {Blind}{Ctrl Up}{Esc}
-  Else
-    Send {Blind}{Ctrl Up}
-Return
+$~ctrl up::
+if instr(A_PriorKey, "control") && !state
+  send {esc}
+state := 0
+return
 
-; Via http://www.howtogeek.com/howto/25590/how-to-enable-ctrlv-for-pasting-in-the-windows-command-prompt/
-if WinActive("ahk_class ConsoleWindowClass") {
-  ^V::
-    SendInput {Raw}%clipboard%
-  return
-}
 
 if WinActive("ahk_class wndclass_desked_gsk") {
   ; Process Go to next member/tag
