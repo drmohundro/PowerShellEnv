@@ -1,0 +1,86 @@
+[.]
+Filename="%USERPROFILE%"
+GUID={44619BFA-616B-4678-99CD-238FC1DEDE0B}
+StartMode=1
+UseRunAs=0
+Disable32BitRedir=0
+UseCount=3
+[downloads]
+Filename="%USERPROFILE%\Downloads"
+GUID={862C8AD0-915D-4AEF-BEE9-0D506B589394}
+StartMode=1
+UseRunAs=0
+Disable32BitRedir=0
+UseCount=1
+[google]
+Filename="http://www.google.com/search?hl=en&q=$W$"
+Notes="Search two billion web pages"
+GUID={C7D59C80-8323-4DA9-B80A-641150D67ACB}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[goto,_a]
+Filename="http://www.google.com/search?hl=en&btnI=I%27m+Feeling+Lucky&q=$W$"
+Notes=""Go to" web search from Google"
+GUID=
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[hibernate]
+Filename="@HIBERNATE@"
+Notes="Windows Hibernate Command"
+GUID={5CD45EA2-DD0B-4BB3-9C1E-0EDEFAF198AA}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[lock]
+Filename="@SCREENSAVE@"
+Notes="Show the WindowsXP Screensaver"
+GUID={BB932194-0D67-4CF7-BFCF-079ED449281E}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[morning]
+Filename="@MULTI@"
+Params="iexplore www.gotapex.com/deals.php@iexplore news.google.com@msimn"
+Notes="Launch some morning webpages and apps"
+GUID={BAFF0D1B-C4BC-41C5-A140-88474910404A}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[movie]
+Filename="http://us.imdb.com/Find?$W$"
+Notes="Find a movie at IMDB"
+GUID={D62B6C61-4371-48DE-BE6E-250C55258764}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[shutdown]
+Filename="@SHUTDOWN@"
+Notes="Trigger the Windows Shutdown dialog"
+GUID=
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[sleep,standby]
+Filename="@STANDBY@"
+Notes="WindowsXP Standby Command"
+GUID={5CD45EA2-EA0B-4BB7-9C1E-0EDEFAF198AA}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+[weather]
+Filename="http://www.weather.com/weather/local/$W$?whatprefs="
+Notes="Type your ZIP Code to get local weather"
+GUID=
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
+UseCount=1
+[wikipedia,encyc]
+Filename="http://en.wikipedia.org/wiki/Special:Search?search=$W$&go=Go"
+Notes="Search Wikipedia Online Encyclopedia"
+GUID={7A4FFA2F-1DC7-4580-B235-70A21AC1C586}
+StartMode=5
+UseRunAs=0
+Disable32BitRedir=0
