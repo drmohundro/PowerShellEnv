@@ -29,6 +29,37 @@ function bcomp($left, $right) {
     & 'C:/Program Files (x86)/Beyond Compare 4/BComp.exe' $left, $right
 }
 
+function Open-MruSolution($sln) {
+    $MRUPath = 'HKCU:\Software\Microsoft\VisualStudio\12.0\ProjectMRUList'
+    $mostRecentlyUsedSlns = Get-Item $MRUPath |
+        select -ExpandProperty Property |
+        foreach {
+            $value = (Get-ItemProperty $MRUPath -Name $_).$_
+            $value.Substring(0, $value.IndexOf('|'))
+        }
+
+    if ([string]::IsNullOrWhitespace($sln)) {
+        Write-Host "Recently Used Solutions:`n"
+        for ($i = 0; $i -lt $mostRecentlyUsedSlns.Count; $i++) {
+            Write-Host "$($i + 1): $($mostRecentlyUsedSlns[$i])"
+        }
+        $toOpen = Read-Host "`nChoose # to open"
+        if ($toOpen -gt 0 -and $toOpen -lt $mostRecentlyUsedSlns.Count) {
+            & $mostRecentlyUsedSlns[$toOpen - 1]
+        }
+    }
+    else {
+        foreach ($mru in $mostRecentlyUsedSlns) {
+            if ($mru -like "*$sln*") {
+                Write-Host "Starting $mru..."
+                & $mru
+                break
+            }
+        }
+    }
+}
+Set-Alias o Open-MruSolution
+
 function Elevate-Process {
     $file, [string]$arguments = $args
     $psi = new-object System.Diagnostics.ProcessStartInfo $file
@@ -99,8 +130,8 @@ function find {
     function shouldFilterDirectory {
         param ($item, $directoriesToExclude)
 
-        if ((Select-String $directoriesToExclude -input $item.DirectoryName) -ne $null) { 
-            return $true 
+        if ((Select-String $directoriesToExclude -input $item.DirectoryName) -ne $null) {
+            return $true
         }
         else {
             return $false
@@ -114,8 +145,8 @@ function find {
         $toInclude = $args
     }
 
-    ls -include $toInclude -recurse -exclude $toExclude | 
-        where { 
+    ls -include $toInclude -recurse -exclude $toExclude |
+        where {
             if ($ShowAllMatches) {
                 return $true
             }
