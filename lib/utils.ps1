@@ -236,7 +236,7 @@ function Load-VcVars {
     if (Is64Bit) {
         $vcargs = 'amd64'
     }
-    $vcVarsBatchFile = "${env:VS120COMNTOOLS}..\..\VC\vcvarsall.bat"
+    $vcVarsBatchFile = "${env:VS140COMNTOOLS}..\..\VC\vcvarsall.bat"
     Invoke-BatchFile $vcVarsBatchFile $vcargs
 }
 

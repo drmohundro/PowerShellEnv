@@ -1,6 +1,6 @@
 $NTIdentity = ([Security.Principal.WindowsIdentity]::GetCurrent())
 $NTPrincipal = (new-object Security.Principal.WindowsPrincipal $NTIdentity)
-$IsAdmin = ($NTPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))	
+$IsAdmin = ($NTPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
 $global:shortenPathLength = 3
 
@@ -26,7 +26,7 @@ function prompt {
     ' '
 
     $host.UI.RawUI.ForegroundColor = [ConsoleColor]::White
-} 
+}
 
 function Shorten-Path([string] $path = $pwd) {
    $loc = $path.Replace($HOME, '~')
@@ -35,7 +35,7 @@ function Shorten-Path([string] $path = $pwd) {
    # make path shorter like tabs in Vim,
    # handle paths starting with \\ and . correctly
    return ($loc -replace "\\(\.?)([^\\]{$shortenPathLength})[^\\]*(?=\\)",'\$1$2')
-} 
+}
 
 function Add-CallToPrompt([scriptblock] $call) {
     [void]$promptCalls.Add($call)
@@ -54,7 +54,7 @@ if (Test-Path c:\Python27) {
 
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 Import-Module posh-git
-Import-Module ./Modules/Jump-Location/Jump.Location.psd1
+Import-Module ./Modules/Jump.Location/Jump.Location.psd1
 
 # override the PSCX cmdlets with the default cmdlet
 Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml

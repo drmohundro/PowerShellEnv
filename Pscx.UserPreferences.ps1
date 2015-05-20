@@ -11,17 +11,17 @@
     TextEditor = 'gvim.exe'
     PageHelpUsingLess = $true
     FileSizeInUnits = $true
-                                      
+
 	ModulesToImport = @{
 		CD                = $false
 		DirectoryServices = $true
 		FileSystem        = $true
-		GetHelp           = $true
+		GetHelp           = $false
 		Net               = $true
 		Prompt            = $false
 		TranscribeSession = $false
 		Utility           = $true
 		Vhd               = $true
 		Wmi               = $false
-	}    
+	}
 }
