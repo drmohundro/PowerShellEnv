@@ -38,10 +38,10 @@ function Open-MruSolution($sln) {
     $mostRecentlyUsedSlns = $guids |
         Foreach-Object {
             $guid = $_
-            Get-ChildItem "hkcu:\software\microsoft\visualstudio\14.0\MRUItems\$($guid)" |
+            Get-ChildItem "$mruItems\$($guid)" |
                 Select-Object -ExpandProperty Property |
                 Foreach-Object {
-                    $value = (Get-ItemProperty "hkcu:\software\microsoft\visualstudio\14.0\MRUItems\$($guid)\Items" -Name $_).$_
+                    $value = (Get-ItemProperty "$mruItems\$($guid)\Items" -Name $_).$_
                     if ($value.Contains('.sln')) {
                         $value.Substring(0, $value.IndexOf('|'))
                     }
