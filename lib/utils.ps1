@@ -38,10 +38,10 @@ function Open-MruSolution($sln) {
     $mostRecentlyUsedSlns = $guids |
         Foreach-Object {
             $guid = $_
-            Get-ChildItem "$mruItems\$($guid)" |
+            Get-ChildItem "$mruItems\$guid" |
                 Select-Object -ExpandProperty Property |
                 Foreach-Object {
-                    $value = (Get-ItemProperty "$mruItems\$($guid)\Items" -Name $_).$_
+                    $value = (Get-ItemProperty "$mruItems\$guid\Items" -Name $_).$_
                     if ($value.Contains('.sln')) {
                         $value.Substring(0, $value.IndexOf('|'))
                     }
@@ -54,7 +54,8 @@ function Open-MruSolution($sln) {
             Write-Host "$($i + 1): $($mostRecentlyUsedSlns[$i])"
         }
         $toOpen = Read-Host "`nChoose # to open"
-        if ($toOpen -gt 0 -and $toOpen -lt $mostRecentlyUsedSlns.Count) {
+        if ($toOpen -gt 0 -and $toOpen -le $mostRecentlyUsedSlns.Count) {
+            Write-Host "Starting $($mostRecentlyUsedSlns[$toOpen - 1])..."
             & $mostRecentlyUsedSlns[$toOpen - 1]
         }
     }
