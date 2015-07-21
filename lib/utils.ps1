@@ -30,12 +30,22 @@ function bcomp($left, $right) {
 }
 
 function Open-MruSolution($sln) {
-    $MRUPath = 'HKCU:\Software\Microsoft\VisualStudio\12.0\ProjectMRUList'
-    $mostRecentlyUsedSlns = Get-Item $MRUPath |
-        select -ExpandProperty Property |
-        foreach {
-            $value = (Get-ItemProperty $MRUPath -Name $_).$_
-            $value.Substring(0, $value.IndexOf('|'))
+    $mruItems = "HKCU:\Software\Microsoft\VisualStudio\14.0\MRUItems"
+    $guids = Get-ChildItem $mruitems |
+        Select-Object -ExpandProperty name |
+        Foreach-Object { $_.Substring($_.LastIndexOf('\') + 1) }
+
+    $mostRecentlyUsedSlns = $guids |
+        Foreach-Object {
+            $guid = $_
+            Get-ChildItem "hkcu:\software\microsoft\visualstudio\14.0\MRUItems\$($guid)" |
+                Select-Object -ExpandProperty Property |
+                Foreach-Object {
+                    $value = (Get-ItemProperty "hkcu:\software\microsoft\visualstudio\14.0\MRUItems\$($guid)\Items" -Name $_).$_
+                    if ($value.Contains('.sln')) {
+                        $value.Substring(0, $value.IndexOf('|'))
+                    }
+                }
         }
 
     if ([string]::IsNullOrWhitespace($sln)) {
