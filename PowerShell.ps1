@@ -4,8 +4,6 @@ $IsAdmin = ($NTPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Admin
 
 $global:shortenPathLength = 3
 
-New-PSDrive -Name Modules -PSProvider FileSystem -root $ProfileDir/Modules | Out-Null
-
 $promptCalls = new-object System.Collections.ArrayList
 
 function prompt {
@@ -52,9 +50,13 @@ if (Test-Path c:\Python27) {
     Add-ToPath "c:\Python27"
 }
 
+if (Test-Path ~/.cask/bin) {
+    Add-ToPath ~/.cask/bin
+}
+
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 Import-Module posh-git
-Import-Module ./Modules/Jump.Location/Jump.Location.psd1
+Import-Module Jump.Location
 
 # override the PSCX cmdlets with the default cmdlet
 Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml
