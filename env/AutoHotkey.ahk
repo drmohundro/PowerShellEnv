@@ -8,15 +8,15 @@
 
 ;Author: Autohotkey forum user RHCP
 ;http://www.autohotkey.com/board/topic/103174-dual-function-control-key/
-if !state
-  state := (GetKeyState("Shift", "P") ||  GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
-return
+;if !state
+  ;state := (GetKeyState("Shift", "P") ||  GetKeyState("Alt", "P") || GetKeyState("LWin", "P") || GetKeyState("RWin", "P"))
+;return
 
-$~ctrl up::
-if instr(A_PriorKey, "control") && !state
-  send {esc}
-state := 0
-return
+;$~ctrl up::
+;if instr(A_PriorKey, "control") && !state
+  ;send {esc}
+;state := 0
+;return
 
 
 if WinActive("ahk_class wndclass_desked_gsk") {
