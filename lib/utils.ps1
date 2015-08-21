@@ -35,13 +35,13 @@ function Open-MruSolution($sln) {
         Select-Object -ExpandProperty name |
         Foreach-Object { $_.Substring($_.LastIndexOf('\') + 1) }
 
-    $mostRecentlyUsedSlns = $guids |
+    [array]$mostRecentlyUsedSlns = $guids |
         Foreach-Object {
             $guid = $_
             Get-ChildItem "$mruItems\$guid" |
                 Select-Object -ExpandProperty Property |
                 Foreach-Object {
-                    $value = (Get-ItemProperty "$mruItems\$guid\Items" -Name $_).$_
+                    $value = Get-ItemPropertyValue "$mruItems\$guid\Items" -Name $_
                     if ($value.Contains('.sln')) {
                         $value.Substring(0, $value.IndexOf('|'))
                     }
