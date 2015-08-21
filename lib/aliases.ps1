@@ -10,7 +10,6 @@ else {
 
 Set-Alias zip 7z
 Set-Alias which Get-Command
-Set-Alias less "less.bat"
 Set-Alias grep Select-String
 Set-Alias sudo Elevate-Process
 Set-Alias color Out-ColorMatchInfo
