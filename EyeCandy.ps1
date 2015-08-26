@@ -1,6 +1,3 @@
-$foreColor = 'White'
-$backColor = 'Black'
-
 $hostTitle = {
     if ($IsAdmin) { '(Admin)' }
 
@@ -31,29 +28,13 @@ function Update-HostTitle {
 
 function Start-EyeCandy {
     $isTerminal = ($host.Name -eq 'ConsoleHost')
-    if ($isTerminal) {
-        if ($foreColor) {
-            $Host.UI.RawUI.ForegroundColor = $foreColor
-        }
-
-        if ($backColor) {
-            $Host.UI.RawUI.BackgroundColor = $backColor
-
-            if($Host.Name -eq 'ConsoleHost') {
-                $Host.PrivateData.ErrorBackgroundColor   = $backColor
-                $Host.PrivateData.WarningBackgroundColor = $backColor
-                $Host.PrivateData.DebugBackgroundColor   = $backColor
-                $Host.PrivateData.VerboseBackgroundColor = $backColor
-            }
-        }
-    }
 
     if ($Error.Count -eq 0) {
         Clear-Host
     }
 
     if ($isTerminal) {
-        & $Banner | Write-Host -ForegroundColor $foreColor
+        & $Banner | Write-Host -ForegroundColor White
     }
     else {
         & $Banner | Write-Host

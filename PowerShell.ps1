@@ -4,7 +4,7 @@ $IsAdmin = ($NTPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Admin
 
 $global:shortenPathLength = 3
 
-$promptCalls = new-object System.Collections.ArrayList
+$promptCalls = New-Object System.Collections.ArrayList
 
 function prompt {
     $chost = [ConsoleColor]::Green
