@@ -35,14 +35,24 @@ function Shorten-Path([string] $path = $pwd) {
    return ($loc -replace "\\(\.?)([^\\]{$shortenPathLength})[^\\]*(?=\\)",'\$1$2')
 }
 
-function Add-CallToPrompt([scriptblock] $call) {
-    [void]$promptCalls.Add($call)
+function Add-CallToPrompt([scriptblock] $block) {
+    [void]$promptCalls.Add($block)
 }
 
 function Add-ToPath {
     $args | foreach {
         # the double foreach's are to handle calls like 'add-topath @(path1, path2) path3
         $_ | foreach { $env:Path += ";$(Resolve-Path $_)" }
+    }
+}
+
+Add-CallToPrompt -block {
+    $jobs = Get-Job | where { $_.Command -notmatch 'Jump\.Location' }
+    if ($jobs.Count -gt 0) {
+        Write-Host -noNewLine '[' -foregroundcolor Magenta
+        $status = Join-String $($jobs | foreach { "$($_.Id):$($_.Name)" }) -Separator ', '
+        Write-Host -noNewLine $status -foregroundcolor Magenta
+        Write-Host -noNewLine ']' -foregroundcolor Magenta
     }
 }
 
