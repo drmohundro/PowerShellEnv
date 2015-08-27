@@ -196,7 +196,20 @@ function To-Hex {
 }
 
 function Start-IisExpressHere {
-    & 'C:\Program Files (x86)\IIS Express\iisexpress.exe' /port:1234 /path:"$($pwd.Path)"
+    Start-IisExpress $pwd.Path
+}
+
+$jobName = 'IisExpressJob'
+function Start-IisExpress($pathToSource) {
+    Start-Job -Name $jobName -Arg $pathToSource -ScriptBlock {
+        param ($pathToSource)
+        & 'C:\Program Files (x86)\IIS Express\iisexpress.exe' /port:1234 /path:$pathToSource
+    }
+}
+
+function Stop-IisExpress {
+    Stop-Job -Name $jobName
+    Remove-Job -Name $jobName
 }
 
 function Is64Bit {
