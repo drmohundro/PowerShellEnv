@@ -141,7 +141,7 @@ function find {
     function shouldFilterDirectory {
         param ($item, $directoriesToExclude)
 
-        if ((Select-String $directoriesToExclude -input $item.DirectoryName) -ne $null) {
+        if ((Select-String -pattern $directoriesToExclude -input $item.DirectoryName) -ne $null) {
             return $true
         }
         else {
@@ -150,13 +150,13 @@ function find {
     }
 
     $toInclude = "*$args*"
-    $toExclude = 'bin', 'obj', '.git', '.hg', '.svn', '_ReSharper\.'
+    $toExclude = 'bin', 'obj', '\.git', '\.hg', '\.svn', '_ReSharper\.'
 
     if ($ExactMatch) {
         $toInclude = $args
     }
 
-    ls -include $toInclude -recurse -exclude $toExclude |
+    Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
         where {
             if ($ShowAllMatches) {
                 return $true
