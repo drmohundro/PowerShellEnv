@@ -47,7 +47,7 @@ function Add-ToPath {
 }
 
 Add-CallToPrompt -block {
-    $jobs = Get-Job | where { $_.Command -notmatch 'Jump\.Location' }
+    $jobs = Get-Job
     if ($jobs.Count -gt 0) {
         Write-Host -noNewLine '[' -foregroundcolor Magenta
         $status = Join-String $($jobs | foreach { "$($_.Id):$($_.Name)" }) -Separator ', '
@@ -66,7 +66,7 @@ if (Test-Path ~/.cask/bin) {
 
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
 Import-Module posh-git
-Import-Module Jump.Location
+Import-Module ZLocation
 
 # override the PSCX cmdlets with the default cmdlet
 Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml
