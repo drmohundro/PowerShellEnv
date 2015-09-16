@@ -18,7 +18,16 @@ Set-Alias tgit tgit-wrapper
 Set-Alias e "gvim.exe"
 Set-Alias subl "C:\Program Files\Sublime Text 3\sublime_text.exe"
 Set-Alias open Start-Process
-Set-Alias j Set-ZLocation
+
+function MySet-ZLocation($path) {
+    if (Test-Path $path) {
+        Set-ZLocation $(Resolve-Path $path)
+    }
+    else {
+        Set-ZLocation $path
+    }
+}
+Set-Alias j MySet-ZLocation
 
 function MarkdownPad($path) {
     $path = Resolve-Path $Path
