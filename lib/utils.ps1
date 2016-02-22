@@ -195,19 +195,72 @@ function To-Hex {
     [Convert]::ToString($num, 16).PadLeft(2, '0')
 }
 
+$defaultJobName = 'IisExpressJob'
 function Start-IisExpressHere {
-    Start-IisExpress $pwd.Path
+    param (
+        [int]
+        $port = 1234,
+
+        [string]
+        $jobName = $defaultJobName,
+
+        [switch]
+        $useVsConfig = $false,
+
+        [switch]
+        $asJob = $false
+    )
+    Start-IisExpress -pathToSource $pwd.Path @PsBoundParameters
 }
 
-$jobName = 'IisExpressJob'
-function Start-IisExpress($pathToSource) {
-    Start-Job -Name $jobName -Arg $pathToSource -ScriptBlock {
-        param ($pathToSource)
-        & 'C:\Program Files (x86)\IIS Express\iisexpress.exe' /port:1234 /path:$pathToSource
+function Start-IisExpress {
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]
+        $pathToSource,
+
+        [int]
+        $port = 1234,
+
+        [string]
+        $jobName = $defaultJobName,
+
+        [switch]
+        $useVsConfig = $false,
+
+        [switch]
+        $asJob = $false
+    )
+
+    $iisExpress = 'C:\Program Files (x86)\IIS Express\iisexpress.exe'
+    $procArgs = [System.Collections.ArrayList]@()
+
+    $vsConfig = "$pathToSource\.vs\config\applicationHost.config"
+    if ($useVsConfig -and (Test-Path $vsConfig)) {
+        # TODO: figure out how to get the hosts from the config file or from the solution/project...
+        $procArgs.AddRange(("/config:`"$vsConfig`"", '/site:"Host"', '/apppool:"Clr4IntegratedAppPool"'))
+    }
+    else {
+        $procArgs.AddRange(("/config:`"$vsConfig`"", "/port:$port", "/path:`"$(Resolve-Path $pathToSource)`""))
+    }
+
+    if ($asJob) {
+        Start-Job -Name $jobName -Arg $iisExpress, $procArgs -ScriptBlock {
+            param ($iisExpress, $procArgs)
+            & $iisExpress @procArgs
+        }
+    }
+    else {
+        & $iisExpress @procArgs
     }
 }
 
 function Stop-IisExpress {
+    param (
+        [string]
+        $jobName = $defaultJobName
+    )
+
     Stop-Job -Name $jobName
     Remove-Job -Name $jobName
 }
