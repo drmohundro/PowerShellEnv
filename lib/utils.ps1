@@ -341,3 +341,8 @@ function Format-Byte {
         [string]::Format("{0,7:0.###} {1}", $result, $units[$unit])
     }
 }
+
+# See http://conemu.github.io/en/ConEmuHk.html#Slowdown for details.
+function Bypass-ConEmuHk {
+    cmd /c -cur_console:i @args
+}

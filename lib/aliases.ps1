@@ -44,7 +44,6 @@ Set-Alias pt Run-PlatinumSearcher
 
 # Some git commands are slow when running in ConEmu and ConEmuHk is injected,
 # particularly if diff-so-fancy is being used.
-# See http://conemu.github.io/en/ConEmuHk.html#Slowdown for details.
 function Run-Git {
     $isRunningConEmu = (Get-ChildItem env:/conemu*).Count -gt 0
 
@@ -58,7 +57,7 @@ function Run-Git {
     }
 
     if ($isRunningConEmu -and $isSlowCommand) {
-        cmd /c -cur_console:i git.exe @args
+        Bypass-ConEmuHk git.exe @args
     }
     else {
         git.exe @args
