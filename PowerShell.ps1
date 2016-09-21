@@ -81,6 +81,8 @@ Push-Location $ProfileDir
     Update-TypeData ./TypeData/System.Type.ps1xml
     Update-TypeData ./TypeData/System.Diagnostics.Process.ps1xml
 
+    Update-FormatData -PrependPath ./Formats.ps1xml
+
     . ./lib/utils.ps1
     . ./lib/aliases.ps1
 Pop-Location
