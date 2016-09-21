@@ -26,7 +26,7 @@ function Start-VisualStudio([string]$path) {
 function bcomp($left, $right) {
     $left = Resolve-Path $left
     $right = Resolve-Path $right
-    & 'C:/Program Files (x86)/Beyond Compare 4/BComp.exe' $left, $right
+    & 'C:/Program Files/Beyond Compare 4/BComp.exe' $left, $right
 }
 
 function Open-MruSolution($sln) {
