@@ -8,7 +8,6 @@ else {
     Set-Alias iis C:\windows\sysnative\inetsrv\InetMgr.exe
 }
 
-Set-Alias zip 7z
 Set-Alias which Get-Command
 Set-Alias grep Select-String
 Set-Alias sudo Elevate-Process
@@ -42,25 +41,3 @@ function Run-PlatinumSearcher {
 }
 Set-Alias pt Run-PlatinumSearcher
 
-# Some git commands are slow when running in ConEmu and ConEmuHk is injected,
-# particularly if diff-so-fancy is being used.
-function Run-Git {
-    $isRunningConEmu = (Get-ChildItem env:/conemu*).Count -gt 0
-
-    $slowGitParams = ('diff', 'dc')
-    $isSlowCommand = $false
-    foreach ($command in $slowGitParams) {
-        if ($args -contains $command) {
-            $isSlowCommand = $true
-            break
-        }
-    }
-
-    if ($isRunningConEmu -and $isSlowCommand) {
-        Bypass-ConEmuHk git.exe @args
-    }
-    else {
-        git.exe @args
-    }
-}
-Set-Alias git Run-Git
