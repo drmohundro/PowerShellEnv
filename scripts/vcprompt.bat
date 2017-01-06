@@ -1,2 +1,2 @@
 @echo off
-python c:\utils\vcprompt.py %*
+python %~dp0\vcprompt.py %*
