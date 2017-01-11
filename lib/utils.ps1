@@ -1,5 +1,5 @@
 function Write-ScmStatus {
-    if ((Get-Location | Select -expand Provider | Select -expand Name) -eq 'FileSystem') {
+    if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
         if (Has-AnyOfParentPath @('.svn', '.git', '.hg')) {
             $vc = & "$profileDir/scripts/vcprompt.bat" --format-hg '[%s:%b (%r:%h)]'  --format-git '[%s:%b (%r)]'
             write-host $vc -f Gray
@@ -16,7 +16,7 @@ function Write-ScmStatus {
 Add-CallToPrompt { Write-ScmStatus }
 
 function Get-AliasShortcut([string]$commandName) {
-    ls Alias: | ?{ $_.Definition -match $commandName }
+    Get-ChildItem Alias: | Where-Object{ $_.Definition -match $commandName }
 }
 
 function Start-VisualStudio([string]$path) {
@@ -87,12 +87,12 @@ function Get-LatestErrors([int] $newest = 5) {
 function Has-AnyOfParentPath([string[]]$paths) {
     $hasPath = $false
     foreach ($path in $paths) {
-        $hasPath = has-parentpath $path
+        $hasPath = Has-ParentPath $path
         if ($hasPath) { return $true }
     }
 }
 
-function has-parentpath([string]$path) {
+function Has-ParentPath([string]$path) {
     if (test-path $path) {
         return $true;
     }
@@ -157,7 +157,7 @@ function find {
     }
 
     Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
-        where {
+        Where-Object {
             if ($ShowAllMatches) {
                 return $true
             }

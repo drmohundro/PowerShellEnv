@@ -15,12 +15,12 @@ function prompt {
 
     Write-Host ([Environment]::MachineName) -nonewline -foregroundcolor $chost
     Write-Host ' {' -nonewline -foregroundcolor $cdelim
-    Write-Host (Shorten-Path (pwd).Path) -nonewline -foregroundcolor $cloc
+    Write-Host (Shorten-Path (Get-Location).Path) -nonewline -foregroundcolor $cloc
     Write-Host '} ' -nonewline -foregroundcolor $cdelim
 
-    $promptCalls | foreach { $_.Invoke() }
+    $promptCalls | ForEach-Object { $_.Invoke() }
 
-    Write-Host "»" -nonewline -foregroundcolor $cloc
+    Write-Host $([char]0x00BB) -nonewline -foregroundcolor $cloc
     ' '
 
     $host.UI.RawUI.ForegroundColor = [ConsoleColor]::White
@@ -39,10 +39,11 @@ function Add-CallToPrompt([scriptblock] $block) {
     [void]$promptCalls.Add($block)
 }
 
-function Add-ToPath {
-    $args | foreach {
-        # the double foreach's are to handle calls like 'add-topath @(path1, path2) path3
-        $_ | foreach { $env:Path += ";$(Resolve-Path $_)" }
+function Add-ToPath([string] $newPath, [switch] $permanent = $false) {
+    $env:Path += ";$(Resolve-Path $newPath)" 
+
+    if ($permanent) {
+        [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine)
     }
 }
 
@@ -50,7 +51,7 @@ Add-CallToPrompt -block {
     $jobs = Get-Job
     if ($jobs.Count -gt 0) {
         Write-Host -noNewLine '[' -foregroundcolor Magenta
-        $status = Join-String $($jobs | foreach { "$($_.Id):$($_.Name)" }) -Separator ', '
+        $status = Join-String $($jobs | ForEach-Object { "$($_.Id):$($_.Name)" }) -Separator ', '
         Write-Host -noNewLine $status -foregroundcolor Magenta
         Write-Host -noNewLine ']' -foregroundcolor Magenta
     }
@@ -58,10 +59,6 @@ Add-CallToPrompt -block {
 
 if (Test-Path c:\Python27) {
     Add-ToPath "c:\Python27"
-}
-
-if (Test-Path ~/.cask/bin) {
-    Add-ToPath ~/.cask/bin
 }
 
 Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
