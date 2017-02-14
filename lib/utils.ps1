@@ -1,15 +1,39 @@
+function Has-GitStagedChanges {
+    git.exe diff-index --quiet --cached HEAD
+    $LASTEXITCODE -eq 1
+}
+
+function Has-GitWorkingTreeChanges {
+    git.exe diff-files --quiet
+    $LASTEXITCODE -eq 1
+}
+
+function Get-GitBranch {
+    git.exe rev-parse --abbrev-ref HEAD
+}
+
 function Write-ScmStatus {
     if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
-        if (Has-AnyOfParentPath @('.svn', '.git', '.hg')) {
-            $vc = & "$profileDir/scripts/vcprompt.bat" --format-hg '[%s:%b (%r:%h)]'  --format-git '[%s:%b (%r)]'
-            write-host $vc -f Gray
+        if (Has-ParentPath '.git') {
+            $branchName = Get-GitBranch
+            $changesIndicator = ''
+
+            if (Has-GitStagedChanges) {
+                $changesIndicator = ' +'
+            }
+
+            if (Has-GitWorkingTreeChanges) {
+                $changesIndicator = ' !'
+            }
+
+            Write-Host "[$(Get-GitBranch)$($changesIndicator)]" -f Gray
         }
         else {
-            write-host ' '
+            Write-Host ' '
         }
     }
     else {
-        write-host ' '
+        Write-Host ' '
     }
 }
 
@@ -84,17 +108,9 @@ function Get-LatestErrors([int] $newest = 5) {
     Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
 }
 
-function Has-AnyOfParentPath([string[]]$paths) {
-    $hasPath = $false
-    foreach ($path in $paths) {
-        $hasPath = Has-ParentPath $path
-        if ($hasPath) { return $true }
-    }
-}
-
 function Has-ParentPath([string]$path) {
     if (test-path $path) {
-        return $true;
+        return $true
     }
 
     $path = "/$path"

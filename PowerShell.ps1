@@ -40,7 +40,7 @@ function Add-CallToPrompt([scriptblock] $block) {
 }
 
 function Add-ToPath([string] $newPath, [switch] $permanent = $false) {
-    $env:Path += ";$(Resolve-Path $newPath)" 
+    $env:Path += ";$(Resolve-Path $newPath)"
 
     if ($permanent) {
         [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine)
