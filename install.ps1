@@ -6,7 +6,7 @@ if ($PSScriptRoot -ne $profileDir) {
 }
 
 Install-Module Find-String
-Install-Module Jump.Location
+Install-Module ZLocation
 Install-Module posh-git
 Install-Module Pscx -AllowClobber
 Install-Module PSReadline
