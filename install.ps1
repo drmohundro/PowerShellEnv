@@ -11,3 +11,4 @@ Install-Module posh-git
 Install-Module Pscx -AllowClobber
 Install-Module PSReadline
 Install-Module PSScriptAnalyzer
+Install-Module VsSetup

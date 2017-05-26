@@ -12,6 +12,58 @@ function Get-GitBranch {
     git.exe rev-parse --abbrev-ref HEAD
 }
 
+# use PSReadLine history (which works across sessions) instead of built-in history
+function Get-History {
+    param (
+        [string] $lookup = $null
+    )
+
+    $history = [System.Collections.ArrayList]@(
+        $last = ''
+        $lines = ''
+        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadlineOption).HistorySavePath))
+        {
+            if ($line.EndsWith('`'))
+            {
+                $line = $line.Substring(0, $line.Length - 1)
+                $lines = if ($lines)
+                {
+                    "$lines`n$line"
+                }
+                else
+                {
+                    $line
+                }
+                continue
+            }
+
+            if ($lines)
+            {
+                $line = "$lines`n$line"
+                $lines = ''
+            }
+
+            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern)))
+            {
+                $last = $line
+                $line
+            }
+        }
+    )
+    $history.Reverse()
+
+    if (-not ([string]::IsNullOrWhiteSpace($lookup))) {
+        $history = $history | Where { $_ -match $lookup }
+    }
+
+    if ([Console]::WindowHeight -gt $history.Count) {
+        $history
+    }
+    else {
+        $history | less
+    }
+}
+
 function Write-ScmStatus {
     if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
         if (Has-ParentPath '.git') {
@@ -53,47 +105,9 @@ function bcomp($left, $right) {
     & 'C:/Program Files/Beyond Compare 4/BComp.exe' $left, $right
 }
 
-function Open-MruSolution($sln) {
-    $mruItems = "HKCU:\Software\Microsoft\VisualStudio\14.0\MRUItems"
-    $guids = Get-ChildItem $mruitems |
-        Select-Object -ExpandProperty name |
-        Foreach-Object { $_.Substring($_.LastIndexOf('\') + 1) }
-
-    [array]$mostRecentlyUsedSlns = $guids |
-        Foreach-Object {
-            $guid = $_
-            Get-ChildItem "$mruItems\$guid" |
-                Select-Object -ExpandProperty Property |
-                Foreach-Object {
-                    $value = Get-ItemPropertyValue "$mruItems\$guid\Items" -Name $_
-                    if ($value.Contains('.sln')) {
-                        $value.Substring(0, $value.IndexOf('|'))
-                    }
-                }
-        }
-
-    if ([string]::IsNullOrWhitespace($sln)) {
-        Write-Host "Recently Used Solutions:`n"
-        for ($i = 0; $i -lt $mostRecentlyUsedSlns.Count; $i++) {
-            Write-Host "$($i + 1): $($mostRecentlyUsedSlns[$i])"
-        }
-        $toOpen = Read-Host "`nChoose # to open"
-        if ($toOpen -gt 0 -and $toOpen -le $mostRecentlyUsedSlns.Count) {
-            Write-Host "Starting $($mostRecentlyUsedSlns[$toOpen - 1])..."
-            & $mostRecentlyUsedSlns[$toOpen - 1]
-        }
-    }
-    else {
-        foreach ($mru in $mostRecentlyUsedSlns) {
-            if ($mru -like "*$sln*") {
-                Write-Host "Starting $mru..."
-                & $mru
-                break
-            }
-        }
-    }
+function msbuild {
+    & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\15.0\Bin\MSBuild.exe')
 }
-Set-Alias o Open-MruSolution
 
 function Elevate-Process {
     $file, [string]$arguments = $args
@@ -127,25 +141,6 @@ function Has-ParentPath([string]$path) {
     }
 
     return $false
-}
-
-function get-parentpath([string]$path) {
-    if (test-path $path) {
-        return $path
-    }
-
-    # Test within parent dirs
-    $checkIn = (Get-Item .).parent
-    while ($checkIn -ne $NULL) {
-        $pathToTest = $checkIn.fullname + '/.hg'
-        if ((Test-Path $pathToTest) -eq $TRUE) {
-            return $pathToTest
-        } else {
-            $checkIn = $checkIn.parent
-        }
-    }
-
-    return $null
 }
 
 function find {
@@ -283,54 +278,6 @@ function Stop-IisExpress {
 
 function Is64Bit {
     [IntPtr]::Size -eq 8
-}
-
-<#
-.SYNOPSIS
-    Invokes the specified batch file and retains any environment variable changes it makes.
-.DESCRIPTION
-    Invoke the specified batch file (and parameters), but also propagate any
-    environment variable changes back to the PowerShell environment that
-    called it.
-.PARAMETER Path
-    Path to a .bat or .cmd file.
-.PARAMETER Parameters
-    Parameters to pass to the batch file.
-.EXAMPLE
-    C:\PS> Invoke-BatchFile "$env:ProgramFiles\Microsoft Visual Studio 9.0\VC\vcvarsall.bat"
-    Invokes the vcvarsall.bat file.  All environment variable changes it makes will be
-    propagated to the current PowerShell session.
-.NOTES
-    Author: Lee Holmes
-#>
-function Invoke-BatchFile {
-    param([string]$Path, [string]$Parameters)
-
-    $tempFile = [IO.Path]::GetTempFileName()
-
-    ## Store the output of cmd.exe.  We also ask cmd.exe to output
-    ## the environment table after the batch file completes
-    cmd.exe /c " `"$Path`" $Parameters && set > `"$tempFile`" "
-
-    ## Go through the environment variables in the temp file.
-    ## For each of them, set the variable in our local environment.
-    Get-Content $tempFile | Foreach-Object {
-        if ($_ -match "^(.*?)=(.*)$")
-        {
-            Set-Content "env:\$($matches[1])" $matches[2]
-        }
-    }
-
-    Remove-Item $tempFile
-}
-
-function Load-VcVars {
-    $vcargs = ''
-    if (Is64Bit) {
-        $vcargs = 'amd64'
-    }
-    $vcVarsBatchFile = "${env:VS140COMNTOOLS}VsDevCmd.bat"
-    Invoke-BatchFile $vcVarsBatchFile $vcargs
 }
 
 function Format-Byte {

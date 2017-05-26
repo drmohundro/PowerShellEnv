@@ -93,5 +93,3 @@ if ((Get-Module PSReadLine -ListAvailable) -ne $null) {
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
-
-Load-VcVars
