@@ -106,7 +106,7 @@ function bcomp($left, $right) {
 }
 
 function msbuild {
-    & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\15.0\Bin\MSBuild.exe')
+    & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\15.0\Bin\MSBuild.exe') @args
 }
 
 function Elevate-Process {
