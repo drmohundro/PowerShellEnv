@@ -1,15 +1,28 @@
+function Get-OS {
+    $os = switch -regex ($PSVersionTable.OS) {
+        '^Darwin' { 'mac' }
+        Default { 'win' }
+    }
+    $os
+}
+$OS = Get-OS
+
+function Is-Windows {
+    $OS -eq 'win'
+}
+
 function Has-GitStagedChanges {
-    git.exe diff-index --quiet --cached HEAD
+    git diff-index --quiet --cached HEAD
     $LASTEXITCODE -eq 1
 }
 
 function Has-GitWorkingTreeChanges {
-    git.exe diff-files --quiet
+    git diff-files --quiet
     $LASTEXITCODE -eq 1
 }
 
 function Get-GitBranch {
-    git.exe rev-parse --abbrev-ref HEAD
+    git rev-parse --abbrev-ref HEAD
 }
 
 # use PSReadLine history (which works across sessions) instead of built-in history
@@ -21,30 +34,24 @@ function Get-History {
     $history = [System.Collections.ArrayList]@(
         $last = ''
         $lines = ''
-        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadlineOption).HistorySavePath))
-        {
-            if ($line.EndsWith('`'))
-            {
+        foreach ($line in [System.IO.File]::ReadLines((Get-PSReadlineOption).HistorySavePath)) {
+            if ($line.EndsWith('`')) {
                 $line = $line.Substring(0, $line.Length - 1)
-                $lines = if ($lines)
-                {
+                $lines = if ($lines) {
                     "$lines`n$line"
                 }
-                else
-                {
+                else {
                     $line
                 }
                 continue
             }
 
-            if ($lines)
-            {
+            if ($lines) {
                 $line = "$lines`n$line"
                 $lines = ''
             }
 
-            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern)))
-            {
+            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern))) {
                 $last = $line
                 $line
             }
@@ -78,48 +85,29 @@ function Write-ScmStatus {
                 $changesIndicator = ' !'
             }
 
-            Write-Host "[$(Get-GitBranch)$($changesIndicator)]" -f Gray
+            ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
         }
         else {
-            Write-Host ' '
+            ' '
         }
     }
     else {
-        Write-Host ' '
+        ' '
     }
 }
 
 Add-CallToPrompt { Write-ScmStatus }
 
+function Add-ToPath([string] $newPath, [switch] $permanent = $false) {
+    $env:Path += ";$(Resolve-Path $newPath)"
+
+    if ($permanent) {
+        [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine)
+    }
+}
+
 function Get-AliasShortcut([string]$commandName) {
-    Get-ChildItem Alias: | Where-Object{ $_.Definition -match $commandName }
-}
-
-function Start-VisualStudio([string]$path) {
-    & devenv /edit $path
-}
-
-function bcomp($left, $right) {
-    $left = Resolve-Path $left
-    $right = Resolve-Path $right
-    & 'C:/Program Files/Beyond Compare 4/BComp.exe' $left, $right
-}
-
-function msbuild {
-    & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\15.0\Bin\MSBuild.exe') @args
-}
-
-function Elevate-Process {
-    $file, [string]$arguments = $args
-    $psi = new-object System.Diagnostics.ProcessStartInfo $file
-    $psi.Arguments = $arguments
-    $psi.Verb = "runas"
-    $psi.WorkingDirectory = Get-Location
-    [System.Diagnostics.Process]::Start($psi)
-}
-
-function Get-LatestErrors([int] $newest = 5) {
-    Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
+    Get-ChildItem Alias: | Where-Object { $_.Definition -match $commandName }
 }
 
 function Has-ParentPath([string]$path) {
@@ -132,67 +120,21 @@ function Has-ParentPath([string]$path) {
     # Test within parent dirs
     $checkIn = (Get-Item .).parent
     while ($checkIn -ne $NULL) {
-        $pathToTest = $checkIn.fullname + $path
+        $pathToTest = $checkIn.FullName + $path
         if ((Test-Path $pathToTest) -eq $TRUE) {
             return $true
-        } else {
-            $checkIn = $checkIn.parent
+        }
+        else {
+            $checkIn = $checkIn.Parent
         }
     }
 
     return $false
 }
 
-function find {
-    param (
-        [switch] $ExactMatch,
-        [switch] $ShowAllMatches
-    )
-
-    function shouldFilterDirectory {
-        param ($item, $directoriesToExclude)
-
-        if ((Select-String -pattern $directoriesToExclude -input $item.DirectoryName) -ne $null) {
-            return $true
-        }
-        else {
-            return $false
-        }
-    }
-
-    $toInclude = "*$args*"
-    $toExclude = 'bin', 'obj', '\.git', '\.hg', '\.svn', '_ReSharper\.'
-
-    if ($ExactMatch) {
-        $toInclude = $args
-    }
-
-    Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
-        Where-Object {
-            if ($ShowAllMatches) {
-                return $true
-            }
-
-            if (shouldFilterDirectory $_ $toExclude) {
-                return $false
-            }
-            else {
-                return $true
-            }
-        }
-}
-
-function head {
-    param (
-        $file,
-        [int] $lineCount = 10
-    )
-    Get-Content $file -total $lineCount
-}
-
 function To-Binary {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [int]$num
     )
     [Convert]::ToString($num, 2)
@@ -200,80 +142,10 @@ function To-Binary {
 
 function To-Hex {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [int]$num
     )
     [Convert]::ToString($num, 16).PadLeft(2, '0')
-}
-
-$defaultJobName = 'IisExpressJob'
-function Start-IisExpressHere {
-    param (
-        [int]
-        $port = 1234,
-
-        [string]
-        $jobName = $defaultJobName,
-
-        [switch]
-        $useVsConfig = $false,
-
-        [switch]
-        $asJob = $false
-    )
-    Start-IisExpress -pathToSource $pwd.Path @PsBoundParameters
-}
-
-function Start-IisExpress {
-    param (
-        [Parameter(Mandatory=$true)]
-        [string]
-        $pathToSource,
-
-        [int]
-        $port = 1234,
-
-        [string]
-        $jobName = $defaultJobName,
-
-        [switch]
-        $useVsConfig = $false,
-
-        [switch]
-        $asJob = $false
-    )
-
-    $iisExpress = 'C:\Program Files (x86)\IIS Express\iisexpress.exe'
-    $procArgs = [System.Collections.ArrayList]@()
-
-    $vsConfig = "$pathToSource\.vs\config\applicationHost.config"
-    if ($useVsConfig -and (Test-Path $vsConfig)) {
-        # TODO: figure out how to get the hosts from the config file or from the solution/project...
-        $procArgs.AddRange(("/config:`"$vsConfig`"", '/site:"Host"', '/apppool:"Clr4IntegratedAppPool"'))
-    }
-    else {
-        $procArgs.AddRange(("/config:`"$vsConfig`"", "/port:$port", "/path:`"$(Resolve-Path $pathToSource)`""))
-    }
-
-    if ($asJob) {
-        Start-Job -Name $jobName -Arg $iisExpress, $procArgs -ScriptBlock {
-            param ($iisExpress, $procArgs)
-            & $iisExpress @procArgs
-        }
-    }
-    else {
-        & $iisExpress @procArgs
-    }
-}
-
-function Stop-IisExpress {
-    param (
-        [string]
-        $jobName = $defaultJobName
-    )
-
-    Stop-Job -Name $jobName
-    Remove-Job -Name $jobName
 }
 
 function Is64Bit {
@@ -282,7 +154,7 @@ function Is64Bit {
 
 function Format-Byte {
     param (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [long]$number
     )
 
@@ -305,7 +177,134 @@ function Format-Byte {
     }
 }
 
-# See http://conemu.github.io/en/ConEmuHk.html#Slowdown for details.
-function Bypass-ConEmuHk {
-    cmd /c -cur_console:i @args
+if (Is-Windows) {
+    function head {
+        param (
+            $file,
+            [int] $lineCount = 10
+        )
+        Get-Content $file -total $lineCount
+    }
+
+    function Elevate-Process {
+        $file, [string]$arguments = $args
+        $psi = new-object System.Diagnostics.ProcessStartInfo $file
+        $psi.Arguments = $arguments
+        $psi.Verb = "runas"
+        $psi.WorkingDirectory = Get-Location
+        [System.Diagnostics.Process]::Start($psi)
+    }
+
+    function Get-LatestErrors([int] $newest = 5) {
+        Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
+    }
+
+    function find {
+        param (
+            [switch] $ExactMatch,
+            [switch] $ShowAllMatches
+        )
+
+        function shouldFilterDirectory {
+            param ($item, $directoriesToExclude)
+
+            if ((Select-String -pattern $directoriesToExclude -input $item.DirectoryName) -ne $null) {
+                return $true
+            }
+            else {
+                return $false
+            }
+        }
+
+        $toInclude = "*$args*"
+        $toExclude = 'bin', 'obj', '\.git', '\.hg', '\.svn', '_ReSharper\.'
+
+        if ($ExactMatch) {
+            $toInclude = $args
+        }
+
+        Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
+            Where-Object {
+            if ($ShowAllMatches) {
+                return $true
+            }
+
+            if (shouldFilterDirectory $_ $toExclude) {
+                return $false
+            }
+            else {
+                return $true
+            }
+        }
+    }
+
+    $defaultJobName = 'IisExpressJob'
+    function Start-IisExpressHere {
+        param (
+            [int]
+            $port = 1234,
+
+            [string]
+            $jobName = $defaultJobName,
+
+            [switch]
+            $useVsConfig = $false,
+
+            [switch]
+            $asJob = $false
+        )
+        Start-IisExpress -pathToSource $pwd.Path @PsBoundParameters
+    }
+
+    function Start-IisExpress {
+        param (
+            [Parameter(Mandatory = $true)]
+            [string]
+            $pathToSource,
+
+            [int]
+            $port = 1234,
+
+            [string]
+            $jobName = $defaultJobName,
+
+            [switch]
+            $useVsConfig = $false,
+
+            [switch]
+            $asJob = $false
+        )
+
+        $iisExpress = 'C:\Program Files (x86)\IIS Express\iisexpress.exe'
+        $procArgs = [System.Collections.ArrayList]@()
+
+        $vsConfig = "$pathToSource\.vs\config\applicationHost.config"
+        if ($useVsConfig -and (Test-Path $vsConfig)) {
+            # TODO: figure out how to get the hosts from the config file or from the solution/project...
+            $procArgs.AddRange(("/config:`"$vsConfig`"", '/site:"Host"', '/apppool:"Clr4IntegratedAppPool"'))
+        }
+        else {
+            $procArgs.AddRange(("/config:`"$vsConfig`"", "/port:$port", "/path:`"$(Resolve-Path $pathToSource)`""))
+        }
+
+        if ($asJob) {
+            Start-Job -Name $jobName -Arg $iisExpress, $procArgs -ScriptBlock {
+                param ($iisExpress, $procArgs)
+                & $iisExpress @procArgs
+            }
+        }
+        else {
+            & $iisExpress @procArgs
+        }
+    }
+
+    function Stop-IisExpress {
+        param (
+            [string]
+            $jobName = $defaultJobName
+        )
+
+        Stop-Job -Name $jobName
+        Remove-Job -Name $jobName
+    }
 }
