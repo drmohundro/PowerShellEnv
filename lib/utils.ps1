@@ -61,39 +61,39 @@ function Get-History {
 
     if (-not ([string]::IsNullOrWhiteSpace($lookup))) {
         $history = $history | Where { $_ -match $lookup }
-    }
+}
 
-    if ([Console]::WindowHeight -gt $history.Count) {
-        $history
-    }
-    else {
-        $history | less
-    }
+if ([Console]::WindowHeight -gt $history.Count) {
+    $history
+}
+else {
+    $history | less.exe
+}
 }
 
 function Write-ScmStatus {
     if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
-        if (Has-ParentPath '.git') {
-            $branchName = Get-GitBranch
-            $changesIndicator = ''
+    if (Has-ParentPath '.git') {
+        $branchName = Get-GitBranch
+        $changesIndicator = ''
 
-            if (Has-GitStagedChanges) {
-                $changesIndicator = ' +'
-            }
-
-            if (Has-GitWorkingTreeChanges) {
-                $changesIndicator = ' !'
-            }
-
-            ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
+        if (Has-GitStagedChanges) {
+            $changesIndicator = ' +'
         }
-        else {
-            ' '
+
+        if (Has-GitWorkingTreeChanges) {
+            $changesIndicator = ' !'
         }
+
+        ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
     }
     else {
         ' '
     }
+}
+else {
+    ' '
+}
 }
 
 Add-CallToPrompt { Write-ScmStatus }
@@ -177,6 +177,27 @@ function Format-Byte {
     }
 }
 
+function Split-String {
+    param (
+        [Parameter(ValueFromPipeline = $true)]
+        [string]
+        $input,
+
+        [string]
+        $separator,
+
+        [switch]
+        $newLine
+    )
+
+    if ($newLine) {
+        [Regex]::Split($input, "`n")
+    }
+    else {
+        [Regex]::Split($input, $separator)
+    }
+}
+
 if (Is-Windows) {
     function head {
         param (
@@ -225,17 +246,17 @@ if (Is-Windows) {
 
         Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
             Where-Object {
-            if ($ShowAllMatches) {
-                return $true
-            }
+                if ($ShowAllMatches) {
+                    return $true
+                }
 
-            if (shouldFilterDirectory $_ $toExclude) {
-                return $false
+                if (shouldFilterDirectory $_ $toExclude) {
+                    return $false
+                }
+                else {
+                    return $true
+                }
             }
-            else {
-                return $true
-            }
-        }
     }
 
     $defaultJobName = 'IisExpressJob'

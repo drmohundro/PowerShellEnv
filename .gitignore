@@ -94,3 +94,6 @@ Thumbs.db
 
 # Folder config file
 Desktop.ini
+
+# ignore local profile installed modules
+Modules/

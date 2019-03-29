@@ -5,7 +5,6 @@ Push-Location $ProfileDir
 . ./lib/aliases.ps1
 
 if (Is-Windows) {
-    Import-Module Pscx -DisableNameChecking -arg "$(Split-Path $profile -parent)\Pscx.UserPreferences.ps1"
     Import-Module ZLocation
 
     # override the PSCX cmdlets with the default cmdlet
@@ -30,6 +29,7 @@ if ((Get-Module PSReadLine -ListAvailable) -ne $null) {
     Set-PSReadlineOption -EditMode Emacs
     Set-PSReadlineOption -BellStyle None
 
+    Set-PSReadLineOption -HistorySearchCursorMovesToEnd
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
