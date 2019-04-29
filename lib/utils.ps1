@@ -61,39 +61,39 @@ function Get-History {
 
     if (-not ([string]::IsNullOrWhiteSpace($lookup))) {
         $history = $history | Where { $_ -match $lookup }
-}
+    }
 
-if ([Console]::WindowHeight -gt $history.Count) {
-    $history
-}
-else {
-    $history | less.exe
-}
+    if ([Console]::WindowHeight -gt $history.Count) {
+        $history
+    }
+    else {
+        $history | less.exe
+    }
 }
 
 function Write-ScmStatus {
     if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
-    if (Has-ParentPath '.git') {
-        $branchName = Get-GitBranch
-        $changesIndicator = ''
+        if (Has-ParentPath '.git') {
+            $branchName = Get-GitBranch
+            $changesIndicator = ''
 
-        if (Has-GitStagedChanges) {
-            $changesIndicator = ' +'
+            if (Has-GitStagedChanges) {
+                $changesIndicator = ' +'
+            }
+
+            if (Has-GitWorkingTreeChanges) {
+                $changesIndicator = ' !'
+            }
+
+            ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
         }
-
-        if (Has-GitWorkingTreeChanges) {
-            $changesIndicator = ' !'
+        else {
+            ' '
         }
-
-        ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
     }
     else {
         ' '
     }
-}
-else {
-    ' '
-}
 }
 
 Add-CallToPrompt { Write-ScmStatus }
@@ -218,114 +218,5 @@ if (Is-Windows) {
 
     function Get-LatestErrors([int] $newest = 5) {
         Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
-    }
-
-    function find {
-        param (
-            [switch] $ExactMatch,
-            [switch] $ShowAllMatches
-        )
-
-        function shouldFilterDirectory {
-            param ($item, $directoriesToExclude)
-
-            if ((Select-String -pattern $directoriesToExclude -input $item.DirectoryName) -ne $null) {
-                return $true
-            }
-            else {
-                return $false
-            }
-        }
-
-        $toInclude = "*$args*"
-        $toExclude = 'bin', 'obj', '\.git', '\.hg', '\.svn', '_ReSharper\.'
-
-        if ($ExactMatch) {
-            $toInclude = $args
-        }
-
-        Get-ChildItem -include $toInclude -recurse -exclude $toExclude |
-            Where-Object {
-                if ($ShowAllMatches) {
-                    return $true
-                }
-
-                if (shouldFilterDirectory $_ $toExclude) {
-                    return $false
-                }
-                else {
-                    return $true
-                }
-            }
-    }
-
-    $defaultJobName = 'IisExpressJob'
-    function Start-IisExpressHere {
-        param (
-            [int]
-            $port = 1234,
-
-            [string]
-            $jobName = $defaultJobName,
-
-            [switch]
-            $useVsConfig = $false,
-
-            [switch]
-            $asJob = $false
-        )
-        Start-IisExpress -pathToSource $pwd.Path @PsBoundParameters
-    }
-
-    function Start-IisExpress {
-        param (
-            [Parameter(Mandatory = $true)]
-            [string]
-            $pathToSource,
-
-            [int]
-            $port = 1234,
-
-            [string]
-            $jobName = $defaultJobName,
-
-            [switch]
-            $useVsConfig = $false,
-
-            [switch]
-            $asJob = $false
-        )
-
-        $iisExpress = 'C:\Program Files (x86)\IIS Express\iisexpress.exe'
-        $procArgs = [System.Collections.ArrayList]@()
-
-        $vsConfig = "$pathToSource\.vs\config\applicationHost.config"
-        if ($useVsConfig -and (Test-Path $vsConfig)) {
-            # TODO: figure out how to get the hosts from the config file or from the solution/project...
-            $procArgs.AddRange(("/config:`"$vsConfig`"", '/site:"Host"', '/apppool:"Clr4IntegratedAppPool"'))
-        }
-        else {
-            $procArgs.AddRange(("/config:`"$vsConfig`"", "/port:$port", "/path:`"$(Resolve-Path $pathToSource)`""))
-        }
-
-        if ($asJob) {
-            Start-Job -Name $jobName -Arg $iisExpress, $procArgs -ScriptBlock {
-                param ($iisExpress, $procArgs)
-                & $iisExpress @procArgs
-            }
-        }
-        else {
-            & $iisExpress @procArgs
-        }
-    }
-
-    function Stop-IisExpress {
-        param (
-            [string]
-            $jobName = $defaultJobName
-        )
-
-        Stop-Job -Name $jobName
-        Remove-Job -Name $jobName
     }
 }

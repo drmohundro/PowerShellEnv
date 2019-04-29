@@ -1,8 +1,6 @@
 Set-Alias gas Get-AliasShortcut
 
 if (Is-Windows) {
-    Set-Alias vs Start-VisualStudio
-
     if (Is64Bit) {
         Set-Alias iis "$($env:windir)\system32\inetsrv\InetMgr.exe"
     }
@@ -30,16 +28,6 @@ if (Is-Windows) {
     }
     Set-Alias j MySet-ZLocation
 
-    function MarkdownPad($path) {
-        $path = Resolve-Path $Path
-        & "C:\Program Files (x86)\MarkdownPad 2\MarkdownPad2.exe" $path
-    }
-    Set-Alias mpad MarkdownPad
-
-    function Start-VisualStudio([string]$path) {
-        & devenv /edit $path
-    }
-
     function bcomp($left, $right) {
         $left = Resolve-Path $left
         $right = Resolve-Path $right
@@ -52,12 +40,6 @@ if (Is-Windows) {
 }
 
 Set-Alias color Out-ColorMatchInfo
-
-function Run-PlatinumSearcher {
-    # default to 'smart-case' searches with '-S'
-    & (Get-Command pt -CommandType Application) -S --color @args
-}
-Set-Alias pt Run-PlatinumSearcher
 
 function Run-RipGrep {
     # default to 'smart-case' searches with '-S'
