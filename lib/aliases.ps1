@@ -35,7 +35,7 @@ if (Is-Windows) {
     }
 
     function msbuild {
-        & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\15.0\Bin\MSBuild.exe') @args
+        & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\Current\Bin\MSBuild.exe') @args
     }
 }
 
