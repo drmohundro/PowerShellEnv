@@ -9,9 +9,11 @@ function prompt {
     # 30 black, 31 red, 32 green, 33 orange, 34 purple, 35 magenta, 36 cyan
     $prompt = "`n"
 
+    $shortedPath = (Shorten-Path (Get-Location).Path)
+
     $prompt += ansiWrap 32 $([Environment]::MachineName)
     $prompt += ansiWrap 36 " {"
-    $prompt += ansiWrap 96 (Shorten-Path (Get-Location).Path)
+    $prompt += ansiWrap 96 $shortedPath
     $prompt += ansiWrap 36 "} "
 
     $promptCalls | ForEach-Object { $prompt += $_.Invoke() }
@@ -23,6 +25,7 @@ function prompt {
     $prompt
 
     $host.UI.RawUI.ForegroundColor = [ConsoleColor]::White
+    $host.UI.RawUI.WindowTitle = $shortedPath
 }
 
 function Add-CallToPrompt([scriptblock] $block) {

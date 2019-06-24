@@ -8,6 +8,7 @@ if ($PSScriptRoot -ne $profileDir) {
         Default {
             # set up a junction to the profile directory
             cmd /c mklink /J "$(Resolve-Path ~\Documents)\WindowsPowerShell" $(Resolve-Path .)
+            cmd /c mklink /J "$(Resolve-Path ~\Documents)\PowerShell" $(Resolve-Path .)
         }
     }
 }
@@ -15,7 +16,6 @@ if ($PSScriptRoot -ne $profileDir) {
 Install-Module Find-String -Scope CurrentUser -Force
 Install-Module ZLocation -Scope CurrentUser -Force
 Install-Module posh-git -Scope CurrentUser -Force
-Install-Module Pscx -AllowClobber -Scope CurrentUser -Force
 Install-Module PSReadline -Scope CurrentUser -Force
 Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
 Install-Module VsSetup -Scope CurrentUser -Force

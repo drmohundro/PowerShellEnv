@@ -31,7 +31,7 @@ if (Is-Windows) {
     function bcomp($left, $right) {
         $left = Resolve-Path $left
         $right = Resolve-Path $right
-        & 'C:/Program Files/Beyond Compare 4/BComp.exe' $left, $right
+        & 'C:/Program Files/Beyond Compare 4/BComp.exe' $left $right
     }
 
     function msbuild {
