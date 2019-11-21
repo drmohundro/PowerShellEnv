@@ -1,6 +1,37 @@
 Push-Location $ProfileDir
 
-. ./lib/prompt.ps1
+Import-Module posh-git
+
+function Write-VcsPrompt {
+    $git = Get-GitStatus -WarningAction SilentlyContinue
+
+    if ($git -ne $null) {
+        $text = "  $($git.Branch)"
+        if ($git.HasWorking) {
+            $text = $text + " +"
+        }
+        if ($git.HasUntracked) {
+            $text = $text + " !"
+        }
+        New-PromptText "$text " -BackgroundColor Yellow -ForegroundColor Black
+    }
+}
+
+$global:prompt = @(
+    { "`n" }
+    { "$(Get-ShortenedPath -SingleCharacterSegment) " }
+    { "`t" } # right align
+    { Write-VcsPrompt }
+    { " $(Get-Date -f "T") " }
+    { "`n" }
+    { New-PromptText $([char]0x00BB) -BackgroundColor Black -ForegroundColor Cyan }
+)
+
+Set-PowerLinePrompt -SetCurrentDirectory -PowerLineFont -Title {
+    -join @(if (Test-Elevation) { "Administrator: " }
+        Get-ShortenedPath -SingleCharacterSegment)
+}
+
 . ./lib/utils.ps1
 . ./lib/aliases.ps1
 
@@ -10,8 +41,6 @@ if (Is-Windows) {
     # override the PSCX cmdlets with the default cmdlet
     Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml
 }
-
-Import-Module posh-git
 
 # Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
 If (Test-Path ./EnvSpecificProfile.ps1) { . ./EnvSpecificProfile.ps1 }

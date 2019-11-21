@@ -71,33 +71,6 @@ function Get-History {
     }
 }
 
-function Write-ScmStatus {
-    if ((Get-Location | Select-Object -expand Provider | Select-Object -expand Name) -eq 'FileSystem') {
-        if (Has-ParentPath '.git') {
-            $branchName = Get-GitBranch
-            $changesIndicator = ''
-
-            if (Has-GitStagedChanges) {
-                $changesIndicator = ' +'
-            }
-
-            if (Has-GitWorkingTreeChanges) {
-                $changesIndicator = ' !'
-            }
-
-            ansiWrap 33 "[$(Get-GitBranch)$($changesIndicator)]"
-        }
-        else {
-            ' '
-        }
-    }
-    else {
-        ' '
-    }
-}
-
-Add-CallToPrompt { Write-ScmStatus }
-
 function Add-ToPath([string] $newPath, [switch] $permanent = $false) {
     $env:Path += ";$(Resolve-Path $newPath)"
 
