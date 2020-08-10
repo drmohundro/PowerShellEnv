@@ -67,7 +67,7 @@ function Get-History {
         $history
     }
     else {
-        $history | less.exe
+        $history | less
     }
 }
 

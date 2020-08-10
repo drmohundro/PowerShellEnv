@@ -216,36 +216,49 @@ This is Joel "Jaykul" Bennett's coloring format file for PowerShell 5.1
                                 if ($host.UI.SupportsVirtualTerminal)
                                 {
                                     $f = $_
-                                    $e = [char]27 + "["
-                                    switch -regex ([System.IO.Path]::GetExtension($_.Name).Trim('.'))
+                                    $o = "$([char]27)[39m$([char]27)[49m"
+                                    $e = [char]27 + "[38;5;"
+                                    switch -regex ($_.Extension.TrimStart('.'))
                                     {
-                                        '^(exe)$' # Applications
+                                        '^exe$' # Applications
                                         {
-                                            "${e}31m$($f.Name)${e}0m"
+                                            "${e}90m $([char]0xfb13) $($f.Name)$o"
+                                            break
                                         }
-                                        '^(ps1|cmd|bat|sh|py|rb|js|pl)$' # Scripts
+                                        '^js$' # javascript (Scripts Color)
                                         {
-                                            "${e}91m$($f.Name)${e}0m"
+                                            "${e}161m $([char]0xf81d) $($f.Name)$o"
+                                            break
+                                        }
+                                        '^(cmd|bat)$' # DOS (Scripts Colo
+                                        {
+                                            "${e}161m $([char]0xe629) $($f.Name)$o"
+                                            break
+                                        }
+                                        '^(ps1|sh|py|rb|pl)$' # More Scripts
+                                        {
+                                            "${e}161m $([char]0xf977) $($f.Name)$o"
+                                            break
                                         }
                                         '^(psm1|dll)$' # Modules, Assemblies
                                         {
-                                            "${e}93m$($f.Name)${e}0m"
+                                            "${e}229m$($f.Name)$o"
                                         }
                                         '^(csv|xml|ps1xml|clixml|psd1|json)$' # Importable data files
                                         {
-                                            "${e}96m$($f.Name)${e}0m"
+                                            "${e}39m$($f.Name)$o"
                                         }
                                         '^(txt|log)$' # readable Text Files
                                         {
-                                            "${e}94m$($f.Name)${e}0m"
+                                            "${e}33m$($f.Name)$o"
                                         }
                                         '^(conf|config|reg)$' # Config files
                                         {
-                                            "${e}33m$($f.Name)${e}0m"
+                                            "${e}112m$($f.Name)$o"
                                         }
                                         '^(docx?|xlsx?|pdf|html?|chm)$' # Documents
                                         {
-                                            "${e}36m$($f.Name)${e}0m"
+                                            "${e}41m$($f.Name)$o"
                                         }
                                         default
                                         {

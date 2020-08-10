@@ -19,7 +19,7 @@ function Write-VcsPrompt {
 
 $global:prompt = @(
     { "`n" }
-    { "$(Get-ShortenedPath -SingleCharacterSegment) " }
+    { " $(Get-ShortenedPath -SingleCharacterSegment) " }
     { "`t" } # right align
     { Write-VcsPrompt }
     { " $(Get-Date -f "T") " }
@@ -27,7 +27,7 @@ $global:prompt = @(
     { New-PromptText $([char]0x00BB) -BackgroundColor Black -ForegroundColor Cyan }
 )
 
-Set-PowerLinePrompt -SetCurrentDirectory -PowerLineFont -Title {
+Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false -SetCurrentDirectory -PowerLineFont -Title {
     -join @(if (Test-Elevation) { "Administrator: " }
         Get-ShortenedPath -SingleCharacterSegment)
 }
