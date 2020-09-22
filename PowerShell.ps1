@@ -5,7 +5,7 @@ Import-Module posh-git
 function Write-VcsPrompt {
     $git = Get-GitStatus -WarningAction SilentlyContinue
 
-    if ($git -ne $null) {
+    if ($null -ne $git) {
         $text = "  $($git.Branch)"
         if ($git.HasWorking) {
             $text = $text + " +"
@@ -37,9 +37,6 @@ Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false 
 
 if (Is-Windows) {
     Import-Module ZLocation
-
-    # override the PSCX cmdlets with the default cmdlet
-    Set-Alias Select-Xml Microsoft.PowerShell.Utility\Select-Xml
 }
 
 # Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
@@ -52,7 +49,7 @@ Update-FormatData -PrependPath ./Formats.ps1xml
 
 Pop-Location
 
-if ((Get-Module PSReadLine -ListAvailable) -ne $null) {
+if ($null -ne (Get-Module PSReadLine -ListAvailable)) {
     Import-Module PSReadLine
 
     Set-PSReadlineOption -EditMode Emacs
