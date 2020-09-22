@@ -11,6 +11,10 @@ function Is-Windows {
     $OS -eq 'win'
 }
 
+function Is-Mac {
+    $OS -eq 'mac'
+}
+
 function Has-GitStagedChanges {
     git diff-index --quiet --cached HEAD
     $LASTEXITCODE -eq 1
@@ -60,7 +64,7 @@ function Get-History {
     $history.Reverse()
 
     if (-not ([string]::IsNullOrWhiteSpace($lookup))) {
-        $history = $history | Where { $_ -match $lookup }
+        $history = $history | Where-Object { $_ -match $lookup }
     }
 
     if ([Console]::WindowHeight -gt $history.Count) {
@@ -92,7 +96,7 @@ function Has-ParentPath([string]$path) {
 
     # Test within parent dirs
     $checkIn = (Get-Item .).parent
-    while ($checkIn -ne $NULL) {
+    while ($null -ne $checkIn) {
         $pathToTest = $checkIn.FullName + $path
         if ((Test-Path $pathToTest) -eq $TRUE) {
             return $true
@@ -168,28 +172,5 @@ function Split-String {
     }
     else {
         [Regex]::Split($input, $separator)
-    }
-}
-
-if (Is-Windows) {
-    function head {
-        param (
-            $file,
-            [int] $lineCount = 10
-        )
-        Get-Content $file -total $lineCount
-    }
-
-    function Elevate-Process {
-        $file, [string]$arguments = $args
-        $psi = new-object System.Diagnostics.ProcessStartInfo $file
-        $psi.Arguments = $arguments
-        $psi.Verb = "runas"
-        $psi.WorkingDirectory = Get-Location
-        [System.Diagnostics.Process]::Start($psi)
-    }
-
-    function Get-LatestErrors([int] $newest = 5) {
-        Get-EventLog -LogName Application -Newest $newest -EntryType Error -After $([DateTime]::Today)
     }
 }

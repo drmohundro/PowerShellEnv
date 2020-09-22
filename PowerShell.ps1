@@ -36,7 +36,12 @@ Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false 
 . ./lib/aliases.ps1
 
 if (Is-Windows) {
+    . ./lib/windows.ps1
+
     Import-Module ZLocation
+}
+elseif (Is-Mac) {
+    . ./lib/mac.ps1
 }
 
 # Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
