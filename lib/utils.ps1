@@ -1,20 +1,3 @@
-function Get-OS {
-    $os = switch -regex ($PSVersionTable.OS) {
-        '^Darwin' { 'mac' }
-        Default { 'win' }
-    }
-    $os
-}
-$OS = Get-OS
-
-function Is-Windows {
-    $OS -eq 'win'
-}
-
-function Is-Mac {
-    $OS -eq 'mac'
-}
-
 function Has-GitStagedChanges {
     git diff-index --quiet --cached HEAD
     $LASTEXITCODE -eq 1

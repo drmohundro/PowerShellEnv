@@ -27,6 +27,9 @@ $global:prompt = @(
     { New-PromptText $([char]0x00BB) -BackgroundColor Black -ForegroundColor Cyan }
 )
 
+Import-Module PANSIES
+Import-Module ~/dev/oss/PowerLine/Source/PowerLine.psm1
+
 Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false -SetCurrentDirectory -PowerLineFont -Title {
     -join @(if (Test-Elevation) { "Administrator: " }
         Get-ShortenedPath -SingleCharacterSegment)
@@ -35,12 +38,12 @@ Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false 
 . ./lib/utils.ps1
 . ./lib/aliases.ps1
 
-if (Is-Windows) {
+if ($IsWindows) {
     . ./lib/windows.ps1
 
     Import-Module ZLocation
 }
-elseif (Is-Mac) {
+elseif ($IsMacOS) {
     . ./lib/mac.ps1
 }
 

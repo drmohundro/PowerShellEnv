@@ -1,24 +1,18 @@
 $profileDir = [System.IO.Path]::GetDirectoryName($profile)
 
 if ($PSScriptRoot -ne $profileDir) {
-    switch ($PSVersionTable.Platform) {
-        'Unix' {
-            ln -s "$(Resolve-Path .)" "$(Resolve-Path ~/.config)/powershell"
-        }
-        Default {
-            # set up a junction to the profile directory
-            cmd /c mklink /J "$(Resolve-Path ~\Documents)\WindowsPowerShell" $(Resolve-Path .)
-            cmd /c mklink /J "$(Resolve-Path ~\Documents)\PowerShell" $(Resolve-Path .)
-        }
+    if ($IsWindows) {
+        # set up a junction to the profile directory
+        cmd /c mklink /J "$(Resolve-Path ~\Documents)\WindowsPowerShell" $(Resolve-Path .)
+        cmd /c mklink /J "$(Resolve-Path ~\Documents)\PowerShell" $(Resolve-Path .)
+    } else {
+        ln -s "$(Resolve-Path .)" "$(Resolve-Path ~/.config)/powershell"
     }
 }
 
-switch -regex ($PSVersionTable.OS) {
-    '^Darwin' {}
-    Default {
-        Install-Module ZLocation -Scope CurrentUser -Force
-        Install-Module VsSetup -Scope CurrentUser -Force
-    }
+if ($IsWindows) {
+    Install-Module ZLocation -Scope CurrentUser -Force
+    Install-Module VsSetup -Scope CurrentUser -Force
 }
 
 Install-Module posh-git -Scope CurrentUser -Force

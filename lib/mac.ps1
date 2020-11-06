@@ -1,5 +1,3 @@
-#Set-Alias j
-
 if (Test-Path /usr/local/bin) {
     $env:PATH = "/usr/local/bin:" + $env:PATH
 }
