@@ -1,6 +1,7 @@
 Push-Location $ProfileDir
 
 Import-Module posh-git
+Import-Module Terminal-Icons
 
 function Write-VcsPrompt {
     $git = Get-GitStatus -WarningAction SilentlyContinue
@@ -51,7 +52,6 @@ elseif ($IsMacOS) {
 If (Test-Path ./EnvSpecificProfile.ps1) { . ./EnvSpecificProfile.ps1 }
 
 Update-TypeData ./TypeData/System.Type.ps1xml
-Update-TypeData ./TypeData/System.Diagnostics.Process.ps1xml
 
 Update-FormatData -PrependPath ./Formats.ps1xml
 
@@ -64,6 +64,7 @@ if ($null -ne (Get-Module PSReadLine -ListAvailable)) {
     Set-PSReadlineOption -BellStyle None
 
     Set-PSReadLineOption -HistorySearchCursorMovesToEnd
+    Set-PSReadLineOption -PredictionSource History
     Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
     Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 }
