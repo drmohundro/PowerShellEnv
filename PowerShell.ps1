@@ -28,9 +28,6 @@ $global:prompt = @(
     { New-PromptText $([char]0x00BB) -BackgroundColor Black -ForegroundColor Cyan }
 )
 
-Import-Module PANSIES
-Import-Module ~/dev/oss/PowerLine/Source/PowerLine.psm1
-
 Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false -SetCurrentDirectory -PowerLineFont -Title {
     -join @(if (Test-Elevation) { "Administrator: " }
         Get-ShortenedPath -SingleCharacterSegment)
