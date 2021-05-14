@@ -35,6 +35,10 @@ function msbuild {
     & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'MSBuild\Current\Bin\MSBuild.exe') @args
 }
 
+function sqlpackage {
+    & (Join-Path (Get-VSSetupInstance | Select-Object -ExpandProperty InstallationPath) 'Common7\IDE\Extensions\Microsoft\SQLDB\DAC\150\sqlpackage.exe') @args
+}
+
 function head {
     param (
         $file,

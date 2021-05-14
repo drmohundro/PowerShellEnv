@@ -50,7 +50,7 @@ If (Test-Path ./EnvSpecificProfile.ps1) { . ./EnvSpecificProfile.ps1 }
 
 Update-TypeData ./TypeData/System.Type.ps1xml
 
-Update-FormatData -PrependPath ./Formats.ps1xml
+# Update-FormatData -PrependPath ./Formats.ps1xml
 
 Pop-Location
 
