@@ -3,8 +3,8 @@ $profileDir = [System.IO.Path]::GetDirectoryName($profile)
 if ($PSScriptRoot -ne $profileDir) {
     if ($IsWindows) {
         # set up a junction to the profile directory
-        cmd /c mklink /J "$(Resolve-Path ~\Documents)\WindowsPowerShell" $(Resolve-Path .)
-        cmd /c mklink /J "$(Resolve-Path ~\Documents)\PowerShell" $(Resolve-Path .)
+        New-Item -Path "$(Resolve-Path ~\Documents)\WindowsPowerShell" -ItemType Junction -Value $(Resolve-Path .)
+        New-Item -Path "$(Resolve-Path ~\Documents)\PowerShell" -ItemType Junction -Value $(Resolve-Path .)
     } else {
         ln -s "$(Resolve-Path .)" "$(Resolve-Path ~/.config)/powershell"
     }
