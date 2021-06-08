@@ -1,4 +1,4 @@
-# About dotfiles
+# About PowerShellEnv
 
 This is my collection of profile options and configuration settings for Windows PowerShell.
 
