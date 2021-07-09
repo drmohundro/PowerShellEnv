@@ -11,7 +11,6 @@ if ($PSScriptRoot -ne $profileDir) {
 }
 
 if ($IsWindows) {
-    Install-Module ZLocation -Scope CurrentUser -Force
     Install-Module VsSetup -Scope CurrentUser -Force
 }
 

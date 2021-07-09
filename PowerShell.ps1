@@ -38,12 +38,15 @@ Set-PowerLinePrompt -Colors "#00DDFF", "#0066FF" -RestoreVirtualTerminal:$false 
 
 if ($IsWindows) {
     . ./lib/windows.ps1
-
-    Import-Module ZLocation
 }
 elseif ($IsMacOS) {
     . ./lib/mac.ps1
 }
+
+Invoke-Expression (& {
+    $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
+    (zoxide init --hook $hook powershell --cmd j) -join "`n"
+})
 
 # Bring in env-specific functionality (i.e. work-specific dev stuff, etc.)
 If (Test-Path ./EnvSpecificProfile.ps1) { . ./EnvSpecificProfile.ps1 }

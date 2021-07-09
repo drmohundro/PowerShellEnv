@@ -14,17 +14,6 @@ Set-Alias mvim "gvim.exe"
 Set-Alias subl "C:\Program Files\Sublime Text 3\sublime_text.exe"
 Set-Alias open Start-Process
 
-# support `j ~/path`
-function MySet-ZLocation($path) {
-    if (Test-Path $path) {
-        Set-ZLocation $(Resolve-Path $path)
-    }
-    else {
-        Set-ZLocation $path
-    }
-}
-Set-Alias j MySet-ZLocation
-
 function bcomp($left, $right) {
     $left = Resolve-Path $left
     $right = Resolve-Path $right
