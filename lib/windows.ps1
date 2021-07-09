@@ -7,11 +7,10 @@ else {
 
 Set-Alias which Get-Command
 Set-Alias grep Select-String
-Set-Alias sudo Elevate-Process
 
 Set-Alias e "gvim.exe"
 Set-Alias mvim "gvim.exe"
-Set-Alias subl "C:\Program Files\Sublime Text 3\sublime_text.exe"
+Set-Alias subl "C:\Program Files\Sublime Text\sublime_text.exe"
 Set-Alias open Start-Process
 
 function bcomp($left, $right) {
@@ -34,15 +33,6 @@ function head {
         [int] $lineCount = 10
     )
     Get-Content $file -total $lineCount
-}
-
-function Elevate-Process {
-    $file, [string]$arguments = $args
-    $psi = new-object System.Diagnostics.ProcessStartInfo $file
-    $psi.Arguments = $arguments
-    $psi.Verb = "runas"
-    $psi.WorkingDirectory = Get-Location
-    [System.Diagnostics.Process]::Start($psi)
 }
 
 function Get-LatestErrors([int] $newest = 5) {
