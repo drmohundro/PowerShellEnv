@@ -13,7 +13,7 @@ function Bypass-Alias($command) {
 }
 
 function Run-Ls {
-    & (Bypass-Alias exa) @args
+    & (Bypass-Alias eza) @args
 }
 Set-Alias ls Run-Ls
 
