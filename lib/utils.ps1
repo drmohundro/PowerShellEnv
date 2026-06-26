@@ -38,7 +38,7 @@ function Get-History {
                 $lines = ''
             }
 
-            if (($line -cne $last) -and (!$pattern -or ($line -match $pattern))) {
+            if ($line -cne $last) {
                 $last = $line
                 $line
             }
@@ -59,10 +59,12 @@ function Get-History {
 }
 
 function Add-ToPath([string] $newPath, [switch] $permanent = $false) {
-    $env:Path += ";$(Resolve-Path $newPath)"
+    $resolvedPath = Resolve-Path $newPath
+    $separator = [IO.Path]::PathSeparator
+    $env:Path += "$separator$resolvedPath"
 
     if ($permanent) {
-        [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::User)
     }
 }
 
@@ -97,7 +99,10 @@ function To-Binary {
         [Parameter(ValueFromPipeline = $true)]
         [int]$num
     )
-    [Convert]::ToString($num, 2)
+
+    process {
+        [Convert]::ToString($num, 2)
+    }
 }
 
 function To-Hex {
@@ -105,7 +110,10 @@ function To-Hex {
         [Parameter(ValueFromPipeline = $true)]
         [int]$num
     )
-    [Convert]::ToString($num, 16).PadLeft(2, '0')
+
+    process {
+        [Convert]::ToString($num, 16).PadLeft(2, '0')
+    }
 }
 
 function Is64Bit {
@@ -118,22 +126,26 @@ function Format-Byte {
         [long]$number
     )
 
-    $units = " B", "KB", "MB", "GB", "TB"
-    $kilobyte = 1024
-
-    if ($number -eq 0) {
-        $number
+    begin {
+        $units = " B", "KB", "MB", "GB", "TB"
+        $kilobyte = 1024
     }
-    else {
-        $unit = 0
-        $result = $number
 
-        while ($result -gt $kilobyte -and $unit -lt $units.Length) {
-            $result = $result / $Kilobyte
-            $unit = $unit + 1
+    process {
+        if ($number -eq 0) {
+            $number
         }
+        else {
+            $unit = 0
+            $result = $number
 
-        [string]::Format("{0,7:0.###} {1}", $result, $units[$unit])
+            while ($result -ge $kilobyte -and $unit -lt ($units.Length - 1)) {
+                $result = $result / $Kilobyte
+                $unit = $unit + 1
+            }
+
+            [string]::Format("{0,7:0.###} {1}", $result, $units[$unit])
+        }
     }
 }
 
@@ -150,10 +162,12 @@ function Split-String {
         $newLine
     )
 
-    if ($newLine) {
-        [Regex]::Split($input, "`n")
-    }
-    else {
-        [Regex]::Split($input, $separator)
+    process {
+        if ($newLine) {
+            [Regex]::Split($input, "`n")
+        }
+        else {
+            [Regex]::Split($input, $separator)
+        }
     }
 }
