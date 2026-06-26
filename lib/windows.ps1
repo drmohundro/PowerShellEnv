@@ -13,7 +13,9 @@ Set-Alias mvim "gvim.exe"
 Set-Alias subl "C:\Program Files\Sublime Text\sublime_text.exe"
 Set-Alias open Start-Process
 
-Invoke-Expression (& { (mise activate pwsh | Out-String) })
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (mise activate pwsh | Out-String) })
+}
 
 function bcomp($left, $right) {
     $left = Resolve-Path $left
